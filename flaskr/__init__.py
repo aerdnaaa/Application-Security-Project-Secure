@@ -6,6 +6,8 @@ from flask_mail import Mail
 import os, sqlite3
 import logging
 import sentry_sdk
+from flask_login import LoginManager
+from flaskr.models.User import User
 
 # # sentry sdk for logging
 # from sentry_sdk.integrations.logging import LoggingIntegration
@@ -26,6 +28,9 @@ api_app = Api(app)
 jwt = JWTManager(app)
 mail = Mail(app)
 CORS(app)
+login_manager = LoginManager(app)
+app.config['RECAPTCHA_PUBLIC_KEY'] = '6LfmcrMZAAAAAJcTRMYVFIii7-reRZ4a_o5V1m37'
+app.config['RECAPTCHA_PRIVATE_KEY'] = '6LfmcrMZAAAAAL_V-ZYV0CDySlbKLzhgi5DqYd8Q'
 app.config.from_object('config')
 
 file_directory = os.path.dirname(os.path.dirname(__file__))
@@ -57,3 +62,15 @@ def trigger_error():
 @app.route('/issues')
 def sentry_issues():
     return ("https://sentry.io/api/0/project/Indirect/Indirect/issues/")
+
+# Flask Login User Loader
+@login_manager.user_loader
+def load_user(user_id):
+    conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
+    c = conn.cursor()
+    c.execute("SELECT rowid, * FROM users WHERE rowid={} ".format(user_id))
+    conn.commit()
+    user = c.fetchone()
+    conn.close()
+    userObj = User(user[0], user[1], user[2], user[3], user[4])
+    return userObj

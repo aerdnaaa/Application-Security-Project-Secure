@@ -14,9 +14,8 @@ c = conn.cursor()
 #     username text,
 #     email text,
 #     password text,
-#     question text,
-#     answer text,
-#     admin text
+#     admin text,
+#     token text
 #     )""")
 # conn.commit()
 # conn.close()

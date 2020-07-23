@@ -36,7 +36,7 @@
     <h2 id="formHeader" class="animated bounceIn"><a href="/Signin" id="signin">Sign In</a> <span style="color: rgba(232, 232, 232, 1);">/</span> <a href="/Register" id="register">Register</a></h2>
 <div class="row justify-content-center">
 <div class="col-8" id="formContent">
-    {% with messages = get_flashed_messages() %}
+    {% with messages = get_flashed_messages(category_filter=["username"]) %}
     {% if messages %}
     {% for message in messages %}
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -59,15 +59,23 @@
     <div class="form-group">
         {{ render_field(form.password, class="form-control") }}
     </div>
-    <div class="form-group">     
-        {{ render_field(form.question, class="form-control") }}   
-    </div> 
-    <div class="form-group">
-        {{ render_field(form.answer, class="form-control") }}
+    {% with messages = get_flashed_messages(category_filter=["password"]) %}
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span>
+        {% for x in message %}
+            {{x}}
+            <br>
+        {% endfor %}
+        </span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
-    <div class="form-group">
-        <input type="checkbox" required>&nbsp;I accept to the <a href="#">Terms of Use</a> & <a href="#">Privacy Policy</a>
-    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
     <input id="submitButton" type="submit" value="Submit" class="btn btn-primary"/>
 </form>
 </div> <!-- col -->

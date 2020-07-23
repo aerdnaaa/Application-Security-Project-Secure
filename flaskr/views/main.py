@@ -3,6 +3,7 @@ from flaskr.models.User import User
 from flaskr.forms import ContactUs, Reviews
 import sqlite3, os
 from flaskr import file_directory
+from flask_login import current_user, login_required
 
 main_blueprint = Blueprint('main', __name__)
 
@@ -10,9 +11,10 @@ main_blueprint = Blueprint('main', __name__)
 @main_blueprint.route("/")
 @main_blueprint.route("/Home")
 def home():
-    if 'username' in session:
-        user = User(session['username'], session['email'], session['password'], session['question'], session['answer'])
-    else:
+    try:
+        current_user.get_username()
+        user = current_user
+    except:
         user = None
     
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
@@ -27,9 +29,10 @@ def home():
 
 @main_blueprint.route("/About")
 def About():
-    if 'username' in session:
-        user = User(session['username'], session['email'], session['password'], session['question'], session['answer'])
-    else:
+    try:
+        current_user.get_username()
+        user = current_user
+    except:
         user = None
     
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
@@ -44,9 +47,10 @@ def About():
 
 @main_blueprint.route("/FAQ")
 def FAQ():
-    if 'username' in session:
-        user = User(session['username'], session['email'], session['password'], session['question'], session['answer'])
-    else:
+    try:
+        current_user.get_username()
+        user = current_user
+    except:
         user = None
 
     return render_template("main/FAQ.html", user=user)
@@ -54,10 +58,12 @@ def FAQ():
 
 @main_blueprint.route("/Emailus", methods=["GET", "POST"])
 def emailus():
-    if 'username' in session:
-        user = User(session['username'], session['email'], session['password'], session['question'], session['answer'])
-    else:
+    try:
+        current_user.get_username()
+        user = current_user
+    except:
         user = None
+
     contactUsForm = ContactUs(request.form)
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()
@@ -71,9 +77,10 @@ def emailus():
 
 @main_blueprint.route("/Reviews/<productid>", methods=["GET", "POST"])
 def reviews(productid):
-    if 'username' in session:
-        user = User(session['username'], session['email'], session['password'], session['question'], session['answer'])
-    else:
+    try:
+        current_user.get_username()
+        user = current_user
+    except:
         user = None
 
     reviewsform = Reviews(request.form)

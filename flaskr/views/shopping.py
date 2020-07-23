@@ -3,16 +3,19 @@ from flaskr.models.User import User
 from flaskr.forms import SearchForm, Reviews
 import sqlite3, os, requests
 from flaskr import file_directory
+from flask_login import current_user, login_required
 
 shopping_blueprint = Blueprint('shopping', __name__)
 
 
 @shopping_blueprint.route("/ShoppingCart", methods=["GET", "POST"])
 def ShoppingCart():
-    if 'username' in session:
-        user = User(session['username'], session['email'], session['password'], session['question'], session['answer'])
-    else:
+    try:
+        current_user.get_username()
+        user = current_user
+    except:
         user = None
+
     original_cost = 0
 
     if 'cart' in session:
@@ -50,9 +53,10 @@ def apply_voucher(voucher_code):
 
 @shopping_blueprint.route("/checkout")
 def checkout():
-    if 'username' in session:
-        user = User(session['username'], session['email'], session['password'], session['question'], session['answer'])
-    else:
+    try:
+        current_user.get_username()
+        user = current_user
+    except:
         user = None
 
     if 'username' in session and 'voucher' in session:
@@ -91,9 +95,10 @@ def addToCart(productID):
 
 @shopping_blueprint.route("/Products", methods=['POST', 'GET'])
 def Products():
-    if 'username' in session:
-        user = User(session['username'], session['email'], session['password'], session['question'], session['answer'])
-    else:
+    try:
+        current_user.get_username()
+        user = current_user
+    except:
         user = None
 
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
@@ -113,9 +118,10 @@ def Products():
 
 @shopping_blueprint.route("/Search/<product>", methods=['POST', 'GET'])
 def Search(product):
-    if 'username' in session:
-        user = User(session['username'], session['email'], session['password'], session['question'], session['answer'])
-    else:
+    try:
+        current_user.get_username()
+        user = current_user
+    except:
         user = None
 
     # For search
@@ -157,8 +163,10 @@ def Search(product):
 
 @shopping_blueprint.route("/Vouchers")
 def vouchers():
-    if 'username' in session:
-        user = User(session['username'], session['email'], session['password'], session['question'], session['answer'])
-    else:
+    try:
+        current_user.get_username()
+        user = current_user
+    except:
         user = None
+
     return render_template("shopping/Vouchers.html", user=user)

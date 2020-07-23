@@ -1,12 +1,14 @@
-class User:
+# FLASK LOGIN
+from flask_login import UserMixin
 
-    def __init__(self, username, email, password, question, answer):
+class User(UserMixin):
+
+    def __init__(self, id, username, email, password, admin):
+        self.id = id
         self.__username = username
         self.__email = email
         self.__password = password
-        self.__question = question
-        self.__answer = answer
-        self.__voucher = ""
+        self.__admin = admin
 
     def get_username(self):
         return self.__username
@@ -17,17 +19,6 @@ class User:
     def get_password(self):
         return self.__password
 
-    def get_question(self):
-        return self.__question
+    def get_admin(self):
+        return self.__admin
 
-    def get_answer(self):
-        return self.__answer
-
-    def set_email(self, email):
-        self.__email = email
-
-    def set_password(self, password):
-        self.__password = password
-
-    def set_voucher(self, voucher):
-        self.__voucher = voucher

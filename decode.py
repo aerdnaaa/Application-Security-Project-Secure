@@ -5,4 +5,4 @@ def decodeSession(session):
     print(zlib.decompress(base64.urlsafe_b64decode('{}==='.format(session))))
 
 decodeSession('')
-# test
+

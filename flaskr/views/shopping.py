@@ -4,6 +4,7 @@ from flaskr.forms import SearchForm, Reviews
 import sqlite3, os, requests
 from flaskr import file_directory
 from flask_login import current_user, login_required
+import string
 
 shopping_blueprint = Blueprint('shopping', __name__)
 
@@ -127,30 +128,10 @@ def Search(product):
     # For search
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()
-    c.execute("SELECT rowid, * FROM products WHERE name LIKE '%{}%' ".format(product))
+    c.execute("SELECT rowid, * FROM products WHERE name=? ", (product,))
     results = c.fetchall()
     print(results)
     conn.close()
-    """
-    UNION SQL INJECTION
-
-    EXFILTRATE DB SCHEMA
-    ' UNION SELECT * FROM x-- (Error: No such table x)
-    ' UNION SELECT '1' FROM sqlite_master-- (Error: SELECTs to the left and right of UNION do not have the same number of result columns)
-    ' UNION SELECT '1', '2', '3', '4', '5', '6', '7', '8' FROM sqlite_master-- (Returns all products)
-    ' UNION SELECT '1', sql, '3', '4', '5', '6', '7', '8' FROM sqlite_master-- (Returns all tables in schema)
-
-    (After knowing fields in user table)
-
-    GET ALL USER CREDENTIALS 
-    ' UNION SELECT '1', username, '3', '4', password, '6', '7', '8' FROM users--
-
-    GET CREDIT CARD DETAILS
-    ' UNION SELECT '1', ccnumber, '3', '4', cvv, '6', '7', '8' FROM paymentdetails--
-
-    GET HIDDEN PRODUCTS
-    ' UNION SELECT rowid, name, image, '4', cost_price, '6', '7', '8' FROM products--
-    """
 
     # Search Form
     form = SearchForm(request.form)

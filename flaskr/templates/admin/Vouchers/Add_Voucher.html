@@ -1,0 +1,62 @@
+{% extends "admin/baseAdmin.html" %}
+
+{% block content %}
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">Add Product</h1>
+                </div><!-- /.col -->
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="/Admin" style="text-decoration: none;">Home</a></li>
+                        <li class="breadcrumb-item active">Add Product</li>
+                    </ol>
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-8 mx-auto">
+                    <form action="http://localhost:5000/api/vouchers" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="voucherNameInput">Name of voucher</label>
+                            <input type="text" class="form-control" name="voucherNameInput" id="voucherNameInput" placeholder="Enter Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="voucherImage">Image of voucher</label>
+                            <input type="file" class="form-control-file" name="voucherImage" id="voucherImage">
+                        </div>
+                        <div class="form-group">
+                            <label for="voucherCode">Code of voucher</label>
+                            <input type="text" class="form-control" name="voucherCode" id="voucherCode">
+                        </div>
+                        <div class="form-group">
+                            <label for="voucherDescription">Description of voucher</label>
+                            <textarea class="form-control" name="voucherDescription" id="voucherDescription" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="voucherAmountInput">Amount</label>
+                            <input type="number" class="form-control" name="voucherAmountInput" id="voucherAmountInput"
+                                   placeholder="Enter Amount" min="0" step="0.01">
+                        </div>
+                        <button type="submit" class="btn btn-outline-primary mx-auto">Submit
+                        </button>
+                    </form>
+                </div>
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+
+    {#    if we need validation for fields use this: https://getbootstrap.com/docs/4.0/components/forms/#validation #}
+
+
+{% endblock %}
+

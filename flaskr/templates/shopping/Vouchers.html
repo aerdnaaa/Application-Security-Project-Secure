@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}Products{% endblock %}
+
+{% block header %}
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/Products.css') }}">
+    <style>
+        /* Centered text */
+        .centered {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .icon {
+            visibility: hidden;
+            cursor: pointer;
+        }
+
+        /* Top left text */
+        .top-left {
+            position: absolute;
+            top: 8px;
+            left: 25px;
+        }
+
+
+        /* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0); /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% from "includes/_formhelper.html" import render_field %}
+
+    <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
+    <div id="main">
+        <h1 class="my-4" style="text-align: center; font-size: 60px;">All Vouchers</h1>
+
+        <br>
+        <br>
+
+        <div id="content" class="row">
+            <!-- test -->
+            {% for voucher in vouchers %}
+                {% if voucher[6] != "inactive" %}
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <div class="d-block mb-4 h-100">
+                            <img class="img-fluid" src="/static/img/{{ i[2] }}">
+                            <h6 style="text-align: center;"><strong>{{ i[1] }}</strong></h6>
+                            <h6 style="text-align: center;">${{ i[4] }}</h6>
+                        </div>
+                    </div>
+
+                {% endif %}
+            {% endfor %}
+
+        </div>
+    </div>
+{% endblock %}
+
+{%  block scripts %}
+    <script>
+        load_data()
+
+        function load_data() {
+            let url = 'http://localhost:5000/api/vouchers';
+            let xmlhttp = new XMLHttpRequest();
+
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let product_array = JSON.parse(this.responseText);
+                    console.log(product_array)
+                    write_data(product_array.data)
+                }
+            };
+
+            xmlhttp.open("GET", url, true);
+            xmlhttp.send()
+
+        }
+
+        function write_data(data) {
+            let parentDiv = document.getElementById("content");
+            for (let i = 0; i < data.length; i++) {
+                if (data[i]["status"] == "active") {
+                    let bigDiv = document.createElement("div");
+                    bigDiv.setAttribute("class", "col-lg-3 col-md-4 col-6")
+                    let smallDiv = document.createElement("div");
+                    smallDiv.setAttribute("class", "d-block mb-4 h-100")
+                    let img = document.createElement("img");
+                    img.setAttribute("class", "img-fluid")
+                    img.setAttribute("src", "/static/img/" + data[i]["voucherImage"])
+                    let nameTag = document.createElement("h6");
+                    nameTag.setAttribute("style", "text-align: center;")
+                    let strongTag = document.createElement("strong");
+                    strongTag.innerText = data[i]["voucherName"]
+                    nameTag.appendChild(strongTag)
+                    let codeTag = document.createElement("h6");
+                    codeTag.setAttribute("style", "text-align: center;")
+                    codeTag.innerText = 'Code: ' + data[i]["voucherCode"]
+
+                    smallDiv.appendChild(img)
+                    smallDiv.appendChild(nameTag)
+                    smallDiv.appendChild(codeTag)
+                    bigDiv.appendChild(smallDiv)
+                    parentDiv.appendChild(bigDiv)
+                }
+            }
+        }
+    </script>
+{% endblock %}
+

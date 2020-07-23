@@ -1,0 +1,57 @@
+{% extends "admin/baseAdmin.html" %}
+
+
+{% block content %}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark">Manage Users</h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="/Admin" style="text-decoration: none;">Home</a></li>
+          <li class="breadcrumb-item active">manage users</li>
+        </ol>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+      <!-- insert content here -->
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Username</th>
+            <th scope="col">Email</th>
+            <th scope="col">Password</th>
+            <th scope="col">Question</th>
+            <th scope="col">Answer</th>
+            <th scope="col">Admin</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for h in users %}
+          <tr>
+            <th scope="row">{{ h[0]}}</th>
+            <td>{{ h[1]}}</td>
+            <td>{{ h[2]}}</td>
+            <td>{{ h[3]}}</td>
+            <td>{{ h[4]}}</td>
+            <td>{{ h[5]}}</td>
+            <td>{{ h[6]}}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+  </div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+{% endblock %}
+

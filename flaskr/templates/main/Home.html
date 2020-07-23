@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/5945030a43.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+    <style media="screen">
+    .carousel-item {
+        height: 100vh;
+        min-height: 300px;
+        background: no-repeat center center scroll;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+    }
+    .carousel-caption {
+        bottom: 270px;
+    }
+
+    .carousel-caption h5 {
+        font-size: 50px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-top: 25px;
+        color: #fafbf5;
+    }
+
+    .carousel-caption p {
+        width: 75%;
+        margin: auto;
+        font-size: 25px;
+        line-height: 1.9;
+        color: #fafbf5;
+    }
+
+    .navbar-light .navbar-brand {
+        color: #fff;
+        font-size: 25px;
+        text-transform: uppercase;
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+
+    .navbar-light .navbar-nav .active > .nav-link, .navbar-light .navbar-nav .nav-link.active, .navbar-light .navbar-nav .nav-link.show, .navbar-light .navbar-nav .show > .nav-link {
+        color: #fff;
+    }
+
+    .navbar-light .navbar-nav .nav-link {
+        color: #fff;
+    }
+
+    .navbar-toggler {
+        background: #fff;
+    }
+
+    .navbar-nav {
+        text-align: center;
+    }
+
+    .nav-link {
+        padding: .2rem 1rem;
+    }
+
+    .nav-link.active,.nav-link:focus{
+        color: #fff;
+    }
+
+    .navbar-toggler {
+        padding: 1px 5px;
+        font-size: 18px;
+        line-height: 0.3;
+    }
+
+    .navbar-light .navbar-nav .nav-link:focus, .navbar-light .navbar-nav .nav-link:hover {
+        color: #fff;
+    }
+
+    /* Centered text */
+    .centered {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    }
+
+    .icon {
+    visibility: hidden;
+    cursor: pointer;
+    } 
+
+    /* Top left text */
+    .top-left {
+    position: absolute;
+    top: 8px;
+    left: 25px;
+    }
+
+    body{
+    font-family: 'Montserrat', sans-serif;
+    }
+
+    .title{
+      animation-delay: 0.5s;
+      animation-duration: 2s;
+    }
+
+    .subtitle{
+      animation-delay: 2.5s;
+    }
+
+    /* footer */
+    .site-footer
+    {
+      background-color:rgba(61, 123, 178, 1);
+      padding:45px 0 20px;
+      font-size:15px;
+      line-height:24px;
+      color:white;
+    }
+    .site-footer hr
+    {
+      border-top-color:#bbb;
+      opacity:0.5
+    }
+    .site-footer hr.small
+    {
+      margin:20px 0
+    }
+    .site-footer h6
+    {
+      color:#fff;
+      font-size:16px;
+      text-transform:uppercase;
+      margin-top:5px;
+      letter-spacing:2px
+    }
+    .site-footer a
+    {
+      color:white;
+    }
+    .site-footer a:hover
+    {
+      color:#3366cc;
+      text-decoration:none;
+    }
+    .footer-links
+    {
+      padding-left:0;
+      list-style:none
+    }
+    .footer-links li
+    {
+      display:block;
+    }
+    .footer-links a
+    {
+      color:white;
+    }
+    .footer-links a:active,.footer-links a:focus,.footer-links a:hover
+    {
+      color:rgba(232, 232, 232, 1);
+      text-decoration:none;
+    }
+    .footer-links.inline li
+    {
+      display:inline-block
+    }
+    .site-footer .social-icons
+    {
+      text-align:right
+    }
+    .site-footer .social-icons a
+    {
+      width:40px;
+      height:40px;
+      line-height:40px;
+      margin-left:6px;
+      margin-right:0;
+      border-radius:100%;
+      background-color:#33353d
+    }
+    .copyright-text
+    {
+      margin:0
+    }
+    @media (max-width:991px)
+    {
+      .site-footer [class^=col-]
+      {
+        margin-bottom:30px
+      }
+    }
+    @media (max-width:767px)
+    {
+      .site-footer
+      {
+        padding-bottom:0
+      }
+      .site-footer .copyright-text,.site-footer .social-icons
+      {
+        text-align:center
+      }
+    }
+    .social-icons
+    {
+      padding-left:0;
+      margin-bottom:0;
+      list-style:none
+    }
+    .social-icons li
+    {
+      display:inline-block;
+      margin-bottom:4px
+    }
+    .social-icons li.title
+    {
+      margin-right:15px;
+      text-transform:uppercase;
+      color:#96a2b2;
+      font-weight:700;
+      font-size:13px
+    }
+    .social-icons a{
+      background-color:#eceeef;
+      color:#818a91;
+      font-size:16px;
+      display:inline-block;
+      line-height:44px;
+      width:44px;
+      height:44px;
+      text-align:center;
+      margin-right:8px;
+      border-radius:100%;
+      -webkit-transition:all .2s linear;
+      -o-transition:all .2s linear;
+      transition:all .2s linear
+    }
+    .social-icons a:active,.social-icons a:focus,.social-icons a:hover
+    {
+      color:#fff;
+      background-color:#29aafe
+    }
+    .social-icons.size-sm a
+    {
+      line-height:34px;
+      height:34px;
+      width:34px;
+      font-size:14px
+    }
+    .social-icons a.facebook:hover
+    {
+      background-color:#3b5998
+    }
+    .social-icons a.twitter:hover
+    {
+      background-color:#00aced
+    }
+    .social-icons a.linkedin:hover
+    {
+      background-color:#c4302b
+    }
+    .social-icons a.dribbble:hover
+    {
+      background-color:#cd486b
+    }
+    @media (max-width:767px)
+    {
+      .social-icons li.title
+      {
+        display:block;
+        margin-right:0;
+        font-weight:600
+      }
+    }
+
+    </style>
+</head>
+<body onscroll="change();">
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainnavbar">
+    <div class="container">
+      <a class="navbar-brand" href="/Home">INDIRECT</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="/Home">Home</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link" href="/Products">
+            Products
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/About">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/Emailus">Contact Us</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/FAQ">FAQ</a>
+        </li>
+        <!-- <li>
+          <form class="search-form" autocomplete="off">
+            <button class="search-button" type="submit" role="button">Search</button>
+            <input class="search-input" id="q22" type="text" name="query" />
+        </form>
+        </li> -->
+        <li>
+          <span id="q33"></span>
+        </li>
+      </ul>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+          <!-- Search -->
+          <li class="nav-item dropdown">
+            <a class="nav-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="fa fa-search" aria-hidden="true"></i>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <form class="form-inline my-2 my-lg-0 search-form" autocomplete="off">
+                <input class="form-control mr-sm-2 search-input" id="q22" type="text" name="query" placeholder="Search" aria-label="Search">
+                <button class="btn btn-success my-2 my-sm-0 search-button" type="submit" role="button">Search</button>
+              </form>
+            </div>
+          </li>
+
+          <li class="nav-item active">
+            <a class="nav-link" href="/ShoppingCart"><i class="fas fa-shopping-basket fa-lg"></i><span class="badge badge-danger navbar-badge">{{quantity}}</span></a> 
+          </li>
+          {% if user != None %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="far fa-user-circle fa-lg"></i>&nbsp;Welcome {{user.get_username()}}!
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="/Profile"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;&nbsp;Profile</a>
+              <a class="dropdown-item" href="#"><i class="fa fa-truck" aria-hidden="true"></i>&nbsp;Orders</a>
+              <a class="dropdown-item" href="#"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Addresses</a>
+              <a class="dropdown-item" href="#"><i class="fa fa-credit-card"></i>&nbsp;&nbsp;Payment</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i>&nbsp;&nbsp;Sign Out</a>
+            </div>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="/Signin"><i class="far fa-user-circle fa-lg"></i></a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+<div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+        <img class="d-block w-100" src="https://myrepublic.net/sg/content/uploads/2016/02/gamer-black-background.jpg" alt="First slide">
+        <div class="carousel-caption d-none d-md-block">
+            <h5 class="animated bounceInDown title">Indirect Home Gym</h5>
+            <p class="animated zoomIn subtitle">Lowest Price Guaranteed</p>
+        </div>
+    </div>
+    <div class="carousel-item">
+        <img class="d-block w-100" src="https://wallpaperset.com/w/full/6/f/f/45526.jpg" alt="Second slide">
+        <div class="carousel-caption d-none d-md-block">
+          <h5 class="animated rollIn title">Authentic Products</h5>
+          <p class="animated rotateIn subtitle">At Reasonable Prices</p>
+        </div>
+    </div>
+    <!-- <div class="carousel-item">
+        <img class="d-block w-100" src="/static/img/wanghao.jpg" alt="Third slide">
+        <div class="carousel-caption d-none d-md-block">
+            <h5>Slider One Item</h5>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Maxime, nulla, tempore. Deserunt excepturi quas vero.</p>
+        </div>
+    </div> -->
+  </div>
+
+  <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+  </a>
+</div>
+
+    <!-- Page Content -->
+    <div class="container" id="content">
+
+        <h1 class="my-4" style="text-align: center; font-size: 80px;">Home</h1>
+        <h3 class="mb-5" style="font-size: 40px;">Top Selling Products</h3>
+         
+        <!-- test -->
+        <div class="row text-center text-lg-left">
+          <div id="content" class="row">
+            <!-- test -->
+            {% for i in products %}
+              {% if i[7] != "inactive" %}
+                <div class="col-lg-3 col-md-4 col-6">
+                  <div class="d-block mb-4 h-100" onmouseover="display(this);" onmouseout="hide(this);">
+                      <img class="img-fluid" src="/static/img/{{i[2]}}">
+                        <div class="centered">
+                          <a href="/Add/{{i[0]}}" title="Add to Shopping Cart"><i class="fas fa-shopping-cart fa-2x icon" style="color:black;"></i></a> &nbsp; &nbsp; 
+                          <a href="/Reviews/{{i[0]}}" title="View"><i class="fas fa-eye fa-2x icon" style="color:black;"></i></a>
+                        </div>
+                        <h6 style="text-align: center;"><strong>{{i[1]}}</strong></h6>
+                        <h6 style="text-align: center;">${{ i[4] }}</h6>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+      
+          </div>
+
+          </div>
+          <!-- ./test -->
+    </div>
+
+    <!-- Site footer -->
+    <footer class="site-footer" style="margin-top: 160px;">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12 col-md-6">
+            <h6>About</h6>
+            <p class="text-justify">Balls and Paddles offers <i>AUTHENTIC</i> table tennis equipment at <i>REASONABLE PRICES</i>. You will find an interesting range of selected products in this online shop. Do come down to our physical shop located at 180 Ang Mo Kio Ave 8, Singapore 569830.</p>
+          </div>
+
+          <div class="col-xs-6 col-md-3">
+            <h6>Categories</h6>
+            <ul class="footer-links">
+              <li><a href="#">Rubbers</a></li>
+              <li><a href="#">Blades</a></li>
+              <li><a href="#">Glues</a></li>
+              <li><a href="#">Accessories</a></li>
+            </ul>
+          </div>
+
+          <div class="col-xs-6 col-md-3">
+            <h6>Quick Links</h6>
+            <ul class="footer-links">
+              <li><a href="/Products">Products</a></li>
+              <li><a href="/About">About Us</a></li>
+              <li><a href="/Emailus">Contact Us</a></li>
+              <li><a href="/FAQ">FAQ</a></li>
+            </ul>
+          </div>
+        </div>
+        <hr>
+      </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 col-sm-6 col-xs-12">
+            <p class="copyright-text">Copyright &copy; 2017 All Rights Reserved by Balls and Paddles.
+            </p>
+          </div>
+
+          <div class="col-md-4 col-sm-6 col-xs-12">
+            <ul class="social-icons">
+              <li><a class="facebook" href="#"><i class="fab fa-facebook-f"></i></a></li>
+              <li><a class="twitter" href="#"><i class="fab fa-twitter"></i></a></li>
+              <li><a class="dribbble" href="#"><i class="fab fa-instagram"></i></a></li>
+              <li><a class="linkedin" href="#"><i class="fab fa-youtube"></i></a></li>   
+            </ul>
+          </div>
+        </div>
+      </div>
+    </footer>
+    
+    <script>
+    function display(icon){
+        icon.children[1].children[0].children[0].style.visibility='visible'; 
+        icon.children[1].children[1].children[0].style.visibility='visible';
+        icon.children[0].style.opacity = "0.4";
+    
+        icon.children[1].children[0].children[0].setAttribute('class', "fas fa-shopping-cart fa-2x icon animated fadeInUp"); 
+        icon.children[1].children[1].children[0].setAttribute('class', "fas fa-eye fa-2x icon animated fadeInUp");
+      }
+      function hide(icon){
+        icon.children[1].children[0].children[0].style.visibility='hidden'; 
+        icon.children[1].children[1].children[0].style.visibility='hidden';
+        icon.children[0].style.opacity = "1";
+    
+        icon.children[1].children[0].children[0].setAttribute('class', "fas fa-shopping-cart fa-2x icon"); 
+        icon.children[1].children[1].children[0].setAttribute('class', "fas fa-eye fa-2x icon");
+      }
+      // function change(){
+      //     document.getElementById('mainnavbar').style.backgroundColor='#3d7bb2';
+      // }
+      function change(){
+        const scrolled = window.scrollY;
+        if (scrolled != 0) {
+          document.getElementById('mainnavbar').style.backgroundColor='#3d7bb2';
+        } else {
+          document.getElementById('mainnavbar').style.backgroundColor='';
+        }
+      }
+
+//testing xss
+
+if (document.readyState == 'loading') {
+	document.addEventListener('DOMContentLoaded', ready)
+} else {
+	ready()
+}
+      function ready() {
+	var query = new URL(window.location).searchParams.get('query')
+	document.getElementById('q22').value = query
+	document.getElementById('q33').innerHTML = query
+}
+
+    </script>
+
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>

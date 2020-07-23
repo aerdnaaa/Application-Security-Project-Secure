@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block header %}
+    <style>
+        h1 {
+            margin: 20px;
+        }
+
+        #basic-information {
+            float: left;
+            margin: 20px 0px 0px 50px;
+            width: 750px;
+        }
+
+        #payment-information {
+            float: left;
+            margin: 20px 0px 0px 50px;
+            width: 750px;
+        }
+
+        #voucher {
+            float: left;
+            margin: 20px 0px 0px 50px;
+            width: 750px;
+        }
+
+        .list-group {
+            float: left;
+            margin-left: 20px;
+            margin-top: 20px;
+            width: 250px;
+        }
+
+        #save-button {
+            float: right;
+            display: none;
+        }
+
+        #password-alert {
+            display: none;
+        }
+
+        #error-message {
+            display: none;
+        }
+
+        #reset-password {
+            display: none;
+        }
+
+        #username-alert {
+            display: none;
+        }
+
+        .show-div {
+            display: block;
+        }
+
+        .no-show-div {
+            display: none;
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% from "includes/_formhelper.html" import render_field %}
+
+    <body>
+    <br>
+    <h1>Profile</h1>
+    <hr>
+
+    <div class="list-group">
+        <a href="#" type="button" class="list-group-item list-group-item-action active"
+           onclick="choose_option(this, 'basic-information')">Basic Information</a>
+        <a href="#" type="button" class="list-group-item list-group-item-action">Orders</a>
+        <a href="#" type="button" class="list-group-item list-group-item-action">Addresses</a>
+        <a href="#" type="button" class="list-group-item list-group-item-action"
+           onclick="choose_option(this, 'payment-information')">Payment Options</a>
+        <a href="#" type="button" class="list-group-item list-group-item-action"
+           onclick="choose_option(this, 'voucher')">Vouchers</a>
+    </div>
+
+    <div id="basic-information" class="show-div">
+        <form id="details-form" method="post">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" value="{{ user.get_username() }}"
+                       name="username" disabled>
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="text" class="form-control" id="email" value="{{ user.get_email() }}" name="email"
+                       disabled>
+            </div>
+            <div class="form-group">
+                <label for="email">Security Question</label>
+                <input type="text" class="form-control" id="email" value="{{ user.get_question() }}" name="email"
+                       disabled>
+            </div>
+            <div class="form-group">
+                <label for="email">Answer</label>
+                <input type="text" class="form-control" id="email" value="{{ user.get_answer() }}" name="email"
+                       disabled>
+            </div>
+        </form>
+
+        <br>
+    </div>
+
+    <div id="payment-information" class="no-show-div">
+        <div id="accordion">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne"
+                                aria-expanded="true" aria-controls="collapseOne">
+                            Credit Card Details
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+                        <form id="paymentdetails-form" method="post">
+                            <div class="form-group">
+                                <label for="fullname">FullName</label>
+                                <input type="text" class="form-control" id="fullname"
+                                       value="{{ payment_details.get_full_name() }}" name="fullname" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="cardnumber">Card Number</label>
+                                <input type="text" class="form-control" id="cardnumber"
+                                       value="{{ payment_details.get_credit_card_number() }}" name="cardnumber"
+                                       disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="expirydate">Expiry Date</label>
+                                <input type="text" class="form-control" id="expirydate"
+                                       value="{{ payment_details.get_expiry_date() }}" name="expirydate" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="ccv">CCV</label>
+                                <input type="text" class="form-control" id="ccv"
+                                       value="{{ payment_details.get_ccv() }}" name="ccv" disabled>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                Add New Card
+            </button>
+        </div>
+    </div>
+
+    <div id="voucher" class="no-show-div">
+        <table class="table unused">
+            <caption>
+                <h3>Available Vouchers</h3>
+            </caption>
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Code</th>
+                <th scope="col">Description</th>
+                <th scope="col">Amount</th>
+            </tr>
+            </thead>
+            <tbody class="unused-body">
+            </tbody>
+        </table>
+
+        <table class="table used mt-2">
+            <caption>
+                <h3>Used Vouchers</h3>
+            </caption>
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Code</th>
+                <th scope="col">Description</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Used Date</th>
+            </tr>
+            </thead>
+            <tbody class="used-body">
+            </tbody>
+        </table>
+
+        <button type="button" class="btn btn-primary float-right" onclick="get_voucher_data('{{ user.get_username() }}')">Refresh Table</button>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form method="POST" action="">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Card Details</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            {{ render_field(form.Name, class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ render_field(form.CreditCardno, class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ render_field(form.ExpiryDate, class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ render_field(form.SecretNumber, class="form-control") }}
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <input id="submitButton" style="text-align: center;" type="submit" value="Add Card"
+                               class="btn btn-primary"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        get_voucher_data('{{ user.get_username() }}')
+
+        function choose_option(button, id) {
+            let original_active = document.getElementsByClassName("active")[0];
+            original_active.classList.remove("active");
+            button.classList.add("active");
+            let div_with_show_class = document.getElementsByClassName("show-div")[0];
+            div_with_show_class.classList.remove("show-div");
+            div_with_show_class.classList.add("no-show-div");
+            let selected_div = document.getElementById(id);
+            selected_div.classList.remove("no-show-div");
+            selected_div.classList.add("show-div");
+        }
+
+        function get_voucher_data(username) {
+            let url = 'http://localhost:5000/api/userVoucher/' + username;
+            let xmlhttp = new XMLHttpRequest();
+
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let voucher_array = JSON.parse(this.responseText);
+                    write_data_to_table(voucher_array.data)
+                }
+            }
+
+            xmlhttp.open("GET", url, true);
+            xmlhttp.send();
+        }
+
+        function write_data_to_table(data) {
+            let unused_tbody = document.getElementsByClassName("unused-body")[0];
+            let used_tbody = document.getElementsByClassName("used-body")[0];
+            {# delete all the child of both tbody #}
+            while (unused_tbody.firstChild) {
+                unused_tbody.removeChild(unused_tbody.lastChild);
+            }
+            while (used_tbody.firstChild) {
+                used_tbody.removeChild(used_tbody.lastChild);
+            }
+            let unused_counter = 0;
+            let used_counter = 0;
+            for (let index = 0; index < data.length; index++) {
+                let item = data[index];
+                let tbody_to_be_written = document.getElementsByClassName(item["status"] + "-body")[0];
+                let row = document.createElement("tr");
+                let column_array = [];
+                {# setting the attributes to arry if item is used or unused #}
+                {# add numbering #}
+                let td = document.createElement("td");
+                if (item["status"] === 'unused') {
+                    column_array = ["title", "code", "description", "amount"];
+                    unused_counter += 1
+                    td.innerText = unused_counter;
+                }
+                else {
+                    column_array = ["title", "code", "description", "amount", "used_date"];
+                    used_counter += 1
+                    td.innerText = used_counter;
+                }
+                row.appendChild(td)
+                {# add data from json #}
+                for (let column=0; column < column_array.length; column++) {
+                    let td = document.createElement("td");
+                    td.innerText = item[column_array[column]]
+                    row.appendChild(td);
+                }
+                tbody_to_be_written.appendChild(row);
+            }
+        }
+    </script>
+{% endblock %}
+

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<style>
+    h3, h6{
+        font-weight: bold;
+    }
+    #end{
+        margin-bottom: 100px;
+    }
+</style>
+<h1 style="text-align: center; margin-top: 10px;">ABOUT BALLS AND PADDLES</h1>
+<br>
+<h3 style="color: #3d7bb2;">Online Shop</h3>
+{% autoescape false %}
+<h6>{{product[2]}}</h6>
+{% endautoescape %}
+{% endblock %}

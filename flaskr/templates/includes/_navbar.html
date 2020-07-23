@@ -1,0 +1,92 @@
+<nav class="navbar navbar-expand-sm navbar-dark fixed-top" style="background-color: #3d7bb2;">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse navbar-content " id="navbarSupportedContent">
+      <a class="navbar-brand" href="/Home">INDIRECT</a>
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="/Home">Home</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link" href="/Products">
+          Products
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/About">About</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/Emailus">Contact Us</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/FAQ">FAQ</a>
+      </li>
+      <!-- <li>
+        <form class="search-form" autocomplete="off">
+          <button class="search-button" type="submit" role="button">Search</button>
+          <input class="search-input" id="query-input" type="text" name="query" />
+      </form>
+      </li> -->
+      <li>
+        <span id="query-output"></span>
+      </li>
+      
+    </ul>
+    
+      <ul class="navbar-nav ml-auto">
+        
+        <li class="nav-item dropdown">
+          <a class="nav-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fa fa-search" aria-hidden="true"></i>
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <form class="form-inline my-2 my-lg-0 search-form" autocomplete="off">
+              <input class="form-control mr-sm-2 search-input" id="query-input" type="text" name="query" placeholder="Search" aria-label="Search">
+              <button class="btn btn-success my-2 my-sm-0 search-button" type="submit" role="button">Search</button>
+            </form>
+          </div>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/ShoppingCart"><i class="fas fa-shopping-basket fa-lg"></i><span class="badge badge-danger navbar-badge">{{quantity}}</span></a> 
+        </li>
+     
+        {% if user != None %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="far fa-user-circle fa-lg"></i>&nbsp;Welcome {{user.get_username()}}!
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="/Profile"><i class="fa fa-user" aria-hidden="true"></i>&nbsp;&nbsp;Profile</a>
+            <a class="dropdown-item" href="#"><i class="fa fa-truck" aria-hidden="true"></i>&nbsp;Orders</a>
+            <a class="dropdown-item" href="#"><i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;Addresses</a>
+            <a class="dropdown-item" href="#"><i class="fa fa-credit-card"></i>&nbsp;&nbsp;Payment</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt"></i>&nbsp;&nbsp;Sign Out</a>
+          </div>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="/Signin"><i class="far fa-user-circle fa-lg"></i></a>
+        </li>
+        {% endif %}
+
+      </ul>
+    </div>
+  </nav>
+
+  <script>
+
+if (document.readyState == 'loading') {
+	document.addEventListener('DOMContentLoaded', ready)
+} else {
+	ready()
+}
+          function ready() {
+	var query = new URL(window.location).searchParams.get('query')
+	document.getElementById('query-input').value = query
+	document.getElementById('query-output').innerHTML = query
+}
+  </script>

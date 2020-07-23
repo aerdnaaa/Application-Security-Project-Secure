@@ -1,0 +1,31 @@
+{% extends "admin/baseAdmin.html" %}
+
+
+{% block content %}
+    <div class="container-fluid">
+    <table class="table">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Title</th>
+                <th scope="col">Type</th>
+                <th scope="col">Culprit</th>
+                <th scope="col">Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dict in data %}
+            <tr>
+                <th scope="row">{{ dict["id"] }}</th>
+                <td>{{ dict["metadata"]["value"] }}</td>
+                <td>{{ dict["metadata"]["type"] }}</td>
+                <td>{{ dict["culprit"] }}</td>
+                <td>{{ dict["firstSeen"] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+    
+{% endblock %}

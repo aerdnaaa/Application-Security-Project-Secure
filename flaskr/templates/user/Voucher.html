@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block header %}
+    <style>
+        h1 {
+            margin: 20px;
+        }
+
+        #basic-information {
+            float: left;
+            margin: 20px 0px 0px 50px;
+            width: 700px;
+        }
+
+        .list-group {
+            float: left;
+            margin-left: 20px;
+            margin-top: 20px;
+            width: 250px;
+        }
+
+        #save-button {
+            float: right;
+            display: none;
+        }
+
+        #password-alert {
+            display: none;
+        }
+
+        #error-message {
+            display: none;
+        }
+
+        #reset-password {
+            display: none;
+        }
+
+        #username-alert {
+            display: none;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% from "includes/_formhelper.html" import render_field %}
+
+    <body>
+    <br>
+    <h1>Profile</h1>
+    <hr>
+
+    <div class="list-group">
+        <a href="/Profile" type="button" class="list-group-item list-group-item-action active">Basic
+            Information</a>
+        <a href="#" type="button" class="list-group-item list-group-item-action">Orders</a>
+        <a href="#" type="button" class="list-group-item list-group-item-action">Addresses</a>
+        <a href="/PaymentInfo" type="button" class="list-group-item list-group-item-action">Payment Options</a>
+        <a href="/Voucher" type="button" class="list-group-item list-group-item-action">Vouchers</a>
+    </div>
+
+    <div id="basic-information">
+        <div>
+            <h2>Available Vouchers</h2>
+            <div class="row">
+
+            </div>
+
+        </div>
+    <div>
+        <h2>Used Vouchers</h2>
+    </div>
+
+    </div>
+{% endblock %}

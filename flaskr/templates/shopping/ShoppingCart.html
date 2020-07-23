@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+{% block title %}Shopping Cart{% endblock %}
+{% from "includes/_formhelper.html" import render_field %}
+
+{% block content %}
+    <!-- <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+
+    <style>
+        .bloc_left_price {
+            color: #c01508;
+            text-align: center;
+            font-weight: bold;
+            font-size: 150%;
+        }
+
+        .category_block li:hover {
+            background-color: #007bff;
+        }
+
+        .category_block li:hover a {
+            color: #ffffff;
+        }
+
+        .category_block li a {
+            color: #343a40;
+        }
+
+        .add_to_cart_block .price {
+            color: #c01508;
+            text-align: center;
+            font-weight: bold;
+            font-size: 200%;
+            margin-bottom: 0;
+        }
+
+        .add_to_cart_block .price_discounted {
+            color: #343a40;
+            text-align: center;
+            text-decoration: line-through;
+            font-size: 140%;
+        }
+
+        .product_rassurance {
+            padding: 10px;
+            margin-top: 15px;
+            background: #ffffff;
+            border: 1px solid #6c757d;
+            color: #6c757d;
+        }
+
+        .product_rassurance .list-inline {
+            margin-bottom: 0;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .product_rassurance .list-inline li:hover {
+            color: #343a40;
+        }
+
+        .reviews_product .fa-star {
+            color: gold;
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+
+        footer {
+            background: #343a40;
+            padding: 40px;
+        }
+
+        footer a {
+            color: #f8f9fa !important
+        }
+
+        #empty {
+            text-align: center;
+            padding: 30px;
+        }
+
+        #emptylogo {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 10px;
+            width: 200px;
+            height: 200px
+        }
+
+        #checkoutbtn {
+            text-align: center;
+        }
+    </style>
+    <script>
+    </script>
+
+
+    <div class="container mb-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="table-responsive">
+                    <div class="container mb-4">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table class="table table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col"></th>
+                                            <th scope="col">Product</th>
+                                            <th scope="col">Available</th>
+                                            <th scope="col" class="text-center">Quantity</th>
+                                            <th scope="col" class="text-right">Price</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for i in cart %}
+                                            <tr>
+                                                <td><img src="/static/img/{{ i[1] }}" style="height:50px; width:50px;"/>
+                                                </td>
+                                                <td>{{ i[0] }}</td>
+                                                <td>In stock</td>
+                                                <td class="text-center">1</td>
+                                                <td class="text-right">${{ i[3] }}</td>
+                                                <td class="text-right">
+                                                    <button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-8 mx-auto">
+                                <div class="form-group row">
+                                    <label for="voucher" class="col-sm-3 col-form-label">Voucher</label>
+                                    <div class="col-sm-6">
+                                        <select class="form-control" id="voucher">
+                                            <option> </option>
+                                        </select>
+                                    </div>
+                                    <button class="col-sm-3 btn btn-sm btn-primary text-uppercase" onclick="apply_voucher()">Apply Voucher</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-6">
+                                Original Amount: {{ original_cost }}
+                            </div>
+                            <div class="col-sm-6">
+                                Result Amount: {{ result_cost }}
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-sm-12  col-md-6">
+                                <a href="/Home" class="btn btn-lg btn-outline-secondary btn-block btn-light">Continue
+                                    Shopping</a>
+                            </div>
+                            <div class="col-sm-12 col-md-6 text-right">
+                                <a class="btn btn-lg btn-block btn-success text-uppercase" href="{{ url_for('shopping.checkout') }}">Checkout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        {% if user != None %}
+            load_data('{{user.get_username()}}', '{{ voucher_code }}')
+        {% else %}
+            load_data('', '')
+        {% endif %}
+
+
+        function load_data(username, voucher_code) {
+            let url = 'http://localhost:5000/api/vouchers';
+            let xmlhttp = new XMLHttpRequest();
+
+            xmlhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let product_array = JSON.parse(this.responseText);
+                    write_data(product_array.data, voucher_code)
+                }
+            };
+
+            xmlhttp.open("GET", url, true);
+            xmlhttp.send()
+
+            if (username != '') {
+                let url2 = 'http://localhost:5000/api/userVoucher/' + username;
+                let xmlhttp = new XMLHttpRequest();
+
+                xmlhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+                        let product_array = JSON.parse(this.responseText);
+                        write_data(product_array.data, voucher_code)
+                    }
+                };
+
+                xmlhttp.open("GET", url2, true);
+                xmlhttp.send()
+            }
+
+        }
+
+        function write_data(data, voucher_code) {
+            let selectForm = document.getElementById("voucher");
+            for (let i = 0; i < data.length; i++) {
+                if (data[i]["status"] == "active" || data[i]["status"] == "unused") {
+                    let option = document.createElement("option");
+                    if (data[i]["code"] == voucher_code) {
+                        option.selected = "selected";
+                    }
+                    option.value = data[i]["code"];
+                    option.text = data[i]["code"];
+                    selectForm.appendChild(option);
+                }
+            }
+        }
+
+        function apply_voucher() {
+            let selectForm = document.getElementById("voucher");
+            let selectVoucherCode = selectForm.value;
+            let url =""
+            if (selectVoucherCode != "") {
+                url = "http://localhost:5000/apply_voucher/" + selectVoucherCode;
+            }
+            else {
+                url = "http://localhost:5000/apply_voucher/:";
+            }
+            window.location = url;
+        }
+
+
+    </script>
+{% endblock %}
+

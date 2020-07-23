@@ -1,0 +1,56 @@
+{% extends "admin/baseAdmin.html" %}
+
+
+{% block content %}
+{% autoescape false %}
+<!-- Content Header (Page header) -->
+<div class="content-header">
+  <div class="container-fluid">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 text-dark">Queries</h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6">
+        <ol class="breadcrumb float-sm-right">
+          <li class="breadcrumb-item"><a href="/Admin" style="text-decoration: none;">Home</a></li>
+          <li class="breadcrumb-item active">Queries</li>
+        </ol>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<!-- /.content-header -->
+
+<!-- Main content -->
+<section class="content">
+  <div class="container-fluid">
+      <!-- insert content here -->
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Email Address</th>
+            <th scope="col">Subject</th>
+            <th scope="col">Message</th>
+
+          </tr>
+        </thead>
+        <tbody>
+        {% for h in query %}
+          <tr>
+            <th scope="row">{{ h[0]}}</th>
+            <td>{{ h[1]}}</td>
+            <td>{{ h[2]}}</td>
+            <td>{{ h[3]}}</td>
+            <td>{{ h[4]}}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+  </div><!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+{% endautoescape %}
+{% endblock %}
+

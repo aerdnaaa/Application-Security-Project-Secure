@@ -14,7 +14,7 @@ class SignIn(Form):
     recaptcha = RecaptchaField()
 
 class Forget(Form):
-    username = StringField("Username", [validators.InputRequired()])
+    email = EmailField("Email", [validators.InputRequired()])
 
 class Recover(Form):
     answer = StringField("Answer", [validators.InputRequired()])

@@ -3,7 +3,9 @@ from flaskr.forms import Register, SignIn, Forget, Recover, PaymentOptions
 from flaskr import file_directory
 from flaskr.models.User import User
 from flaskr.models.PaymentInfo import PaymentInfo
+from flask_mail import Mail, Message
 import sqlite3, os
+import math, random
 
 # HASH
 import hashlib
@@ -161,6 +163,35 @@ def Profile():
     user = current_user
     return render_template("user/Profile.html", user=user)
 
+@user_blueprint.route("/Forget", methods=["GET", "POST"])
+def forget():
+    try:
+        current_user.get_username()
+        return redirect(url_for('main.home'))
+    except:
+        user = None
+
+    form = Forget(request.form)
+    if request.method == "POST" and form.validate():
+        conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
+        c = conn.cursor()
+        c.execute("SELECT username, email FROM users WHERE email=?", (form.email.data,))
+        user = c.fetchone()
+        if user != None:
+            digits = "0123456789"
+            OTP = "" 
+            for i in range(6) : 
+                OTP += digits[math.floor(random.random() * 10)]
+            msg = Mail.send_message(
+                'Indirect Home Gym Password Reset',
+                sender='ballsnpaddles@gmail.com',
+                recipients=['k3ith.tang@gmail.com'],
+                body="Dear {}\nYour 6 digit OTP is {}. It will expire in 2 minutes.\nRegards\nIndirect Home Gym Team".format(user[0], OTP)
+                )
+                
+        
+
+    return render_template("user/Forget.html", user=user, form=form)
 
 @user_blueprint.route("/Voucher")
 def Voucher():

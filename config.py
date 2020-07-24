@@ -12,8 +12,8 @@ JWT_SECRET_KEY = 'super-secret'
 # MAIL_USE_SSL = False
 
 # Send email through Gmail
-MAIL_SERVER = 'smtp.gmail.com'
-MAIL_PORT = 465
-MAIL_USE_SSL = True
-MAIL_USERNAME = 'ballsnpaddles@gmail.com'
-MAIL_PASSWORD = 'ionevvqefbbwmcip'
+# MAIL_SERVER = 'smtp.gmail.com'
+# MAIL_PORT = 465
+# MAIL_USE_SSL = True
+# MAIL_USERNAME = 'ballsnpaddles@gmail.com'
+# MAIL_PASSWORD = 'ionevvqefbbwmcip'

@@ -1,11 +1,12 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response
 from flaskr.forms import Register, SignIn, Forget, Recover, PaymentOptions
-from flaskr import file_directory
+from flaskr import file_directory, mail
 from flaskr.models.User import User
 from flaskr.models.PaymentInfo import PaymentInfo
-from flask_mail import Mail, Message
+from flask_mail import Message
 import sqlite3, os
 import math, random
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 # HASH
 import hashlib
@@ -178,20 +179,52 @@ def forget():
         c.execute("SELECT username, email FROM users WHERE email=?", (form.email.data,))
         user = c.fetchone()
         if user != None:
+            # Generate OTP
             digits = "0123456789"
             OTP = "" 
             for i in range(6) : 
                 OTP += digits[math.floor(random.random() * 10)]
-            msg = Mail.send_message(
+
+            # Generate Token
+            s = Serializer('secret_key', 120)
+            token = s.dumps(OTP).decode('UTF-8')
+            c.execute("UPDATE users SET token=? WHERE username=?", (token, user[0]))
+            conn.commit()
+
+            # Send Email to user
+            mail.send_message(
                 'Indirect Home Gym Password Reset',
                 sender='ballsnpaddles@gmail.com',
-                recipients=['k3ith.tang@gmail.com'],
-                body="Dear {}\nYour 6 digit OTP is {}. It will expire in 2 minutes.\nRegards\nIndirect Home Gym Team".format(user[0], OTP)
-                )
+                recipients=[user[1]],
+                body="Dear {}\n\nYour 6 digit OTP {} will expire in 2 minutes.\n\nRegards\nIndirect Home Gym Team".format(user[0], OTP)
+            )
+            return redirect(url_for('user.Reset', username=user[0]))
+        else:
+            flash("Email does not exist!")
                 
-        
-
     return render_template("user/Forget.html", user=user, form=form)
+
+@user_blueprint.route("/Reset_Password/<username>", methods=["GET", "POST"])
+def Reset(username):
+    try:
+        current_user.get_username()
+        return redirect(url_for('main.home'))
+    except:
+        user = None
+
+    form = Recover(request.form)
+    if request.method == "POST" and form.validate():
+        conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
+        c = conn.cursor()
+        c.execute("SELECT token FROM users WHERE username=?", (username,))
+        token = c.fetchone()[0]
+        s = Serializer('secret_key', 120)
+        try:
+            s.loads(token)
+        except:
+            flash("Your OTP has Expired")
+
+    return render_template("user/Recover.html", user=user, form=form)
 
 @user_blueprint.route("/Voucher")
 def Voucher():

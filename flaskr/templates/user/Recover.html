@@ -33,7 +33,7 @@
 </style>
 <div class="container">
     <br>
-    <h2 id="formHeader" class="animated bounceIn">Security Question</h2>
+    <h2 id="formHeader" class="animated bounceIn">Enter OTP</h2>
     <div class="row justify-content-center">
         <div class="col-7" id="formContent">
             {% with messages = get_flashed_messages(category_filter=["error"]) %}
@@ -61,17 +61,11 @@
             {% endfor %}
             {% endif %}
             {% endwith %}
+
             <form method="POST" action="">
                 <div class="form-group">
-                  <label for="qn">Security Question</label>
-                  <input type="text" class="form-control" id="qn" value="{{ userObj.get_question() }}" name="qn" disabled>
+                    {{ render_field(form.OTP, class="form-control") }}
                 </div>
-                <div class="form-group">
-                    {{ render_field(form.answer, class="form-control") }}
-                </div>
-                <div class="form-group">
-                  {{ render_field(form.password, class="form-control") }}
-              </div>
                 <input id="submitButton" style="text-align: center;" type="submit" value="Submit" class="btn btn-primary"/>
             </form>
             <br>

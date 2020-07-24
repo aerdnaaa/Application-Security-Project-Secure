@@ -26,6 +26,13 @@ from flaskr.models.User import User
 app = Flask(__name__)
 api_app = Api(app)
 jwt = JWTManager(app)
+app.config.update(
+    MAIL_SERVER = 'smtp.gmail.com',
+    MAIL_PORT = 465,
+    MAIL_USE_SSL = True,
+    MAIL_USERNAME = 'ballsnpaddles@gmail.com',
+    MAIL_PASSWORD = 'ionevvqefbbwmcip'
+)
 mail = Mail(app)
 CORS(app)
 login_manager = LoginManager(app)

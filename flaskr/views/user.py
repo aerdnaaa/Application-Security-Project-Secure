@@ -198,6 +198,7 @@ def forget():
                 recipients=[user[1]],
                 body="Dear {}\n\nYour 6 digit OTP {} will expire in 2 minutes.\n\nRegards\nIndirect Home Gym Team".format(user[0], OTP)
             )
+            print(OTP)
             return redirect(url_for('user.OTP', username=user[0]))
         else:
             flash("Email does not exist!")
@@ -224,13 +225,19 @@ def OTP(username):
         s = Serializer('secret_key', 120)
         try:
             OTP = s.loads(token)
-            if form.OTP.data == OTP:
-                session['verified'] = True
-                return redirect(url_for('user.Reset_Password', username=username))
-            else:
-                flash('Invalid OTP! Please try again')
+            print('The OTP is', OTP)
         except:
             flash("Your OTP has Expired")
+        if form.OTP.data == OTP:
+            session['verified'] = True
+            c.execute("UPDATE users SET token=NULL WHERE username=? ", (username,))
+            conn.commit()
+            return redirect(url_for('user.reset', username=username))
+        else:
+            flash('Invalid OTP! Please try again')
+
+        
+        
 
     return render_template("user/Recover.html", user=user, form=form)
 
@@ -267,6 +274,7 @@ def reset(username):
             c.execute("UPDATE users SET password=? WHERE username=?", (pw_hash, username))
             conn.commit()
             conn.close()
+            session.pop('verified', None)
             return redirect(url_for('user.signin'))
 
         else:

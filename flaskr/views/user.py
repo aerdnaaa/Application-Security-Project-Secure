@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response
-from flaskr.forms import Register, SignIn, Forget, Recover, PaymentOptions
+from flaskr.forms import Register, SignIn, Forget, Recover, PaymentOptions, Reset
 from flaskr import file_directory, mail
 from flaskr.models.User import User
 from flaskr.models.PaymentInfo import PaymentInfo
@@ -198,31 +198,92 @@ def forget():
                 recipients=[user[1]],
                 body="Dear {}\n\nYour 6 digit OTP {} will expire in 2 minutes.\n\nRegards\nIndirect Home Gym Team".format(user[0], OTP)
             )
-            return redirect(url_for('user.Reset', username=user[0]))
+            return redirect(url_for('user.OTP', username=user[0]))
         else:
             flash("Email does not exist!")
                 
     return render_template("user/Forget.html", user=user, form=form)
 
-@user_blueprint.route("/Reset_Password/<username>", methods=["GET", "POST"])
-def Reset(username):
+@user_blueprint.route("/OTP/<username>", methods=["GET", "POST"])
+def OTP(username):
+    conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
+    c = conn.cursor()
     try:
         current_user.get_username()
         return redirect(url_for('main.home'))
     except:
-        user = None
+        if c.execute("SELECT token FROM users WHERE username=?", (username,)).fetchone() != None:
+            user = None
+        else:
+            return redirect(url_for('main.home'))
 
     form = Recover(request.form)
     if request.method == "POST" and form.validate():
-        conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
-        c = conn.cursor()
         c.execute("SELECT token FROM users WHERE username=?", (username,))
         token = c.fetchone()[0]
         s = Serializer('secret_key', 120)
         try:
-            s.loads(token)
+            OTP = s.loads(token)
+            if form.OTP.data == OTP:
+                session['verified'] = True
+                return redirect(url_for('user.Reset_Password', username=username))
+            else:
+                flash('Invalid OTP! Please try again')
         except:
             flash("Your OTP has Expired")
+
+    return render_template("user/Recover.html", user=user, form=form)
+
+@user_blueprint.route("/Reset_Password/<username>", methods=["GET", "POST"])
+def reset(username):
+    try:
+        current_user.get_username()
+        return redirect(url_for('main.home'))
+    except:
+        if 'verified' in session:
+            user = None
+        else:
+            return redirect(url_for('main.home'))
+
+    form = Reset(request.form)
+    if request.method == "POST" and form.validate():
+        conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
+        c = conn.cursor()
+        # Password policy
+        policy = PasswordPolicy.from_names(
+            length=12,  # min length: 12
+            uppercase=1,  # need min. 1 uppercase letters
+            numbers=1,  # need min. 1 digits
+            special=1,  # need min. 1 special characters
+        )
+        errorMsg = [] # List to store error messages
+        
+        # Checks password against policy and stores violations in list
+        check = policy.test(form.password.data) 
+        strengthLvl = PasswordStats(form.password.data).strength()
+        # If password has 0 errors and meets complexity requirement, password hashed and stored in database
+        if check == [] and  strengthLvl> 0.5:
+            pw_hash = hashlib.sha256(form.password.data.encode()).hexdigest()
+            c.execute("UPDATE users SET password=? WHERE username=?", (pw_hash, username))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('user.signin'))
+
+        else:
+            # Goes through check list to check which policy does password fail
+            for i in check:
+                if type(i).__name__ == 'Length':
+                    errorMsg.append('Password must have a minimum of 12 characters')
+                elif type(i).__name__ == 'Uppercase':
+                    errorMsg.append("Password must include uppercase characters")
+                elif type(i).__name__ == 'Numbers':
+                    errorMsg.append("Password must include numbers")
+                elif type(i).__name__ == 'Special':
+                    errorMsg.append("Password must include special characters (eg. !, @, #, $, %)")
+            # Strength level checks complexity of password
+            if strengthLvl < 0.5:
+                errorMsg.append("Password too simple. Avoid simple combinations and dictionary words")
+            flash(errorMsg, 'password')
 
     return render_template("user/Recover.html", user=user, form=form)
 

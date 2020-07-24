@@ -19,6 +19,9 @@ class Forget(Form):
 class Recover(Form):
     OTP = StringField("OTP", [validators.InputRequired()])
 
+class Reset(Form):
+    password = PasswordField("New Password", [validators.InputRequired()])
+
 class ContactUs(Form):
     name = StringField('Name', [validators.Length(max=50), validators.InputRequired()])
     email = EmailField('Email Address', [validators.Email(), validators.InputRequired()])

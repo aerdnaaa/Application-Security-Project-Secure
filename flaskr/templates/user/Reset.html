@@ -33,14 +33,19 @@
 </style>
 <div class="container">
     <br>
-    <h2 id="formHeader" class="animated bounceIn">Enter OTP</h2>
+    <h2 id="formHeader" class="animated bounceIn">New Password</h2>
     <div class="row justify-content-center">
         <div class="col-7" id="formContent">
             {% with messages = get_flashed_messages() %}
             {% if messages %}
             {% for message in messages %}
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <span>{{ message }}</span>
+                <span>
+                {% for x in message %}
+                    {{x}}
+                    <br>
+                {% endfor %}
+                </span>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -50,7 +55,7 @@
             {% endwith %}
             <form method="POST" action="">
                 <div class="form-group">
-                    {{ render_field(form.OTP, class="form-control") }}
+                    {{ render_field(form.password, class="form-control") }}
                 </div>
                 <input id="submitButton" style="text-align: center;" type="submit" value="Submit" class="btn btn-primary"/>
             </form>

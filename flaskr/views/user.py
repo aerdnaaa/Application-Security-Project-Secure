@@ -49,8 +49,8 @@ def register():
             strengthLvl = PasswordStats(register.password.data).strength()
             # If password has 0 errors and meets complexity requirement, password hashed and stored in database
             if check == [] and  strengthLvl> 0.5:
-                pw_hash = hashlib.sha256(register.password.data.encode()).hexdigest()
-                c.execute("INSERT INTO users (username, email, password, admin) VALUES (?, ?, ?, ?)", (register.username.data, register.email.data, pw_hash, 'n'))
+                pw_hash = hashlib.sha512(register.password.data.encode()).hexdigest()
+                c.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (register.username.data, register.email.data, pw_hash, 'n'))
                 conn.commit()
                 conn.close()
                 return redirect(url_for('user.signin'))
@@ -88,7 +88,7 @@ def signin():
 
     signin = SignIn(request.form)
     if request.method == "POST" and signin.validate():
-        pw_hash = hashlib.sha256(signin.password.data.encode()).hexdigest()
+        pw_hash = hashlib.sha512(signin.password.data.encode()).hexdigest()
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
         c = conn.cursor()
         c.execute("SELECT rowid, * FROM users WHERE username=? AND password=?", (signin.username.data, pw_hash))
@@ -271,7 +271,7 @@ def reset(token):
         strengthLvl = PasswordStats(form.password.data).strength()
         # If password has 0 errors and meets complexity requirement, password hashed and stored in database
         if check == [] and  strengthLvl> 0.5:
-            pw_hash = hashlib.sha256(form.password.data.encode()).hexdigest()
+            pw_hash = hashlib.sha512(form.password.data.encode()).hexdigest()
             c.execute("UPDATE users SET password=? WHERE username=?", (pw_hash, username))
             conn.commit()
             conn.close()

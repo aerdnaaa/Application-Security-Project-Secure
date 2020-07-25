@@ -84,12 +84,14 @@ def addToCart(productID):
 
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()
-    c.execute(" SELECT * FROM products WHERE rowid='{}' ".format(productID))
+    c.execute(" SELECT * FROM products WHERE rowid=? ", (productID))
     item = c.fetchone()
-    conn.close()
-
-    cart.append(item)
-    session['cart'] = cart
+    # Check if product is inactive
+    if item[6] == "inactive":
+        return redirect(url_for('shopping.Products'))
+    else:
+        cart.append(item)
+        session['cart'] = cart
 
     return redirect(url_for('shopping.ShoppingCart'))
 

@@ -14,12 +14,17 @@ c = conn.cursor()
 #     username text,
 #     email text,
 #     password text,
-#     admin text,
-#     token text
+#     admin text
 #     )""")
 # conn.commit()
 # conn.close()
 # print('table created')
+
+# Drop User Table
+# c.execute("DROP TABLE users")
+# conn.commit()
+# conn.close()
+# print('table dropped')
 
 # Create product table
 # c.execute("""CREATE TABLE products (
@@ -142,12 +147,6 @@ c = conn.cursor()
 # conn.commit()
 # conn.close()
 # print('rows created')
-
-# Drop User Table
-# c.execute("DROP TABLE users")
-# conn.commit()
-# conn.close()
-# print('table dropped')
 
 
 # Drop Product Table

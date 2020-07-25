@@ -9,12 +9,12 @@ class PaymentInfo:
                 break
         self.__id = id
     
-    def __init__(self, FullName , CreditCardNo , expiryDate, ccv ):
+    def __init__(self, FullName , CreditCardNo , expiryDate, cvv ):
         self.set_id()
         self.__Fullname = FullName
         self.__CreditCardNo = CreditCardNo
         self.__expiryDate = expiryDate
-        self.__ccv = ccv
+        self.__cvv = cvv
 
     def get_id(self):
         return self.__id
@@ -40,5 +40,5 @@ class PaymentInfo:
     def set_expiryDate(self, value):
         self.__expiryDate = value
 
-    def set_ccv(self, value):
-        self.__ccv = value
+    def set_cvv(self, value):
+        self.__cvv = value

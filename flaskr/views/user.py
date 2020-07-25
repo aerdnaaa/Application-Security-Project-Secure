@@ -164,6 +164,7 @@ def Profile():
     user = current_user
     return render_template("user/Profile.html", user=user)
 
+
 @user_blueprint.route("/Forget", methods=["GET", "POST"])
 def forget():
     try:
@@ -198,6 +199,7 @@ def forget():
             flash("Email does not exist!", "danger")
                 
     return render_template("user/Forget.html", user=user, form=form)
+
 
 @user_blueprint.route("/Reset_Password/<token>", methods=["GET", "POST"])
 def reset(token):
@@ -257,12 +259,3 @@ def reset(token):
 
     return render_template("user/Reset.html", user=user, form=form, valid=valid)
 
-@user_blueprint.route("/Voucher")
-def Voucher():
-    try:
-        current_user.get_username()
-        user = current_user
-    except:
-        return redirect(url_for('user.signin'))
-
-    return render_template("user/Voucher.html", title="Vouchers", user=user)

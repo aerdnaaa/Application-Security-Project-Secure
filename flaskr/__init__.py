@@ -27,11 +27,11 @@ app = Flask(__name__)
 api_app = Api(app)
 jwt = JWTManager(app)
 app.config.update(
-    MAIL_SERVER = 'smtp.gmail.com',
-    MAIL_PORT = 465,
-    MAIL_USE_SSL = True,
-    MAIL_USERNAME = 'ballsnpaddles@gmail.com',
-    MAIL_PASSWORD = 'ionevvqefbbwmcip'
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT=465,
+    MAIL_USE_SSL=True,
+    MAIL_USERNAME='ballsnpaddles@gmail.com',
+    MAIL_PASSWORD='ionevvqefbbwmcip'
 )
 mail = Mail(app)
 CORS(app)
@@ -69,6 +69,7 @@ def trigger_error():
 @app.route('/issues')
 def sentry_issues():
     return ("https://sentry.io/api/0/project/Indirect/Indirect/issues/")
+
 
 # Flask Login User Loader
 @login_manager.user_loader

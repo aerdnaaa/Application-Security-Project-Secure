@@ -3,6 +3,7 @@ from flaskr.forms import Register, SignIn, Forget, PaymentOptions, Reset
 from flaskr import file_directory, mail
 from flaskr.models.User import User
 from flaskr.models.PaymentInfo import PaymentInfo
+import pyffx
 from flask_mail import Message
 import sqlite3, os
 import math, random
@@ -136,7 +137,7 @@ def logout():
 #             payment_details = PaymentInfo("", "", "", "")
 #     else:
 #         return redirect(url_for('user.signin'))
-
+#
 #     payment_form = PaymentOptions(request.form)
 #     if request.method == "POST" and payment_form.validate():
 #         print("this code is running")
@@ -155,14 +156,51 @@ def logout():
 #             return redirect(url_for('user.Profile'))
 #         else:
 #             flash('Only can store 1 card detail')
-
+#
 #     return render_template("user/Profile.html", user=user, form=payment_form, payment_details=payment_details)
 
 @user_blueprint.route("/Profile", methods=["GET", "POST"])
 @login_required
 def Profile():
     user = current_user
-    return render_template("user/Profile.html", user=user)
+    conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
+    c = conn.cursor()
+    c.execute("SELECT * FROM paymentdetails WHERE username='{}' ".format(user.get_username()))
+    # self define paymentinformation and fetch one and return into payment information variable.
+    paymentinformation = c.fetchone()
+    if paymentinformation:
+        payment_details = PaymentInfo(paymentinformation[1], paymentinformation[2], paymentinformation[3],
+                                               int(paymentinformation[4]))
+    else:
+        payment_details = PaymentInfo("", "", "", "")
+
+    payment_form = PaymentOptions(request.form)
+    if request.method == "POST" and payment_form.validate():
+        conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
+        c = conn.cursor()
+        c.execute("SELECT * FROM paymentdetails WHERE username='{}' ".format(user.get_username()))
+        result = c.fetchone()
+        if not result:
+            e1 = pyffx.Integer(b'12376987ca98sbdacsbjkdwd898216jasdnsd98213912', length=16)
+            e2 = pyffx.Integer(b'12376987ca98sbdacsbjkdwd898216jasdnsd98213912', length=len(str(payment_form.SecretNumber.data)))
+            encrypted_card_no = e1.encrypt(payment_form.CreditCardno.data)
+            encrypted_card_CVV = e2.encrypt(payment_form.SecretNumber.data)
+            c.execute("INSERT INTO paymentdetails VALUES ('{}','{}','{}','{}','{}')".format(user.get_username(),
+                                                                                                 payment_form.Name.data,
+                                                                                                 encrypted_card_no,
+                                                                                                 payment_form.ExpiryDate.data,
+                                                                                                 encrypted_card_CVV))
+            conn.commit()
+            conn.close()
+            return redirect(url_for('user.Profile'))
+        else:
+            flash('Only can store 1 card detail')
+    if payment_details.get_full_name() != '':
+        cn = payment_details.get_credit_card_number()
+        e1 = pyffx.Integer(b'12376987ca98sbdacsbjkdwd898216jasdnsd98213912', length=16)
+        cn = e1.decrypt(cn)
+        return render_template("user/Profile.html", user=user,payment_details = payment_details,form=payment_form,cn=str(cn))
+    return render_template("user/Profile.html", user=user,payment_details = payment_details,form=payment_form)
 
 @user_blueprint.route("/Forget", methods=["GET", "POST"])
 def forget():

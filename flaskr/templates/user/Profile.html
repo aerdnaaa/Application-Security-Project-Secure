@@ -95,6 +95,16 @@
                 <input type="text" class="form-control" id="email" value="{{ user.get_email() }}" name="email"
                        disabled>
             </div>
+            <div class="form-group">
+                <label for="email">Security Question</label>
+                <input type="text" class="form-control" id="email" value="" name="email"
+                       disabled>
+            </div>
+            <div class="form-group">
+                <label for="email">Answer</label>
+                <input type="text" class="form-control" id="email" value="" name="email"
+                       disabled>
+            </div>
         </form>
 
         <br>
@@ -111,7 +121,36 @@
                         </button>
                     </h5>
                 </div>
-
+                {% if payment_details.get_full_name() == '' %}
+                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                    <div class="card-body">
+                        <form id="paymentdetails-form" method="post">
+                            <div class="form-group">
+                                <label for="fullname">FullName</label>
+                                <input type="text" class="form-control" id="fullname"
+                                       value="" name="fullname" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="cardnumber">Card Number</label>
+                                <input type="text" class="form-control" id="cardnumber"
+                                       value="" name="cardnumber"
+                                       disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="expirydate">Expiry Date</label>
+                                <input type="text" class="form-control" id="expirydate"
+                                       value="" name="expirydate" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="ccv">CVV</label>
+                                <input type="text" class="form-control" id="ccv"
+                                       value="" name="ccv" disabled>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+                {% else %}
                 <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                     <div class="card-body">
                         <form id="paymentdetails-form" method="post">
@@ -123,23 +162,24 @@
                             <div class="form-group">
                                 <label for="cardnumber">Card Number</label>
                                 <input type="text" class="form-control" id="cardnumber"
-                                       value="{{ payment_details.get_credit_card_number() }}" name="cardnumber"
+                                       value="{{ 'X'*12+cn[12:] }}" name="cardnumber"
                                        disabled>
                             </div>
                             <div class="form-group">
                                 <label for="expirydate">Expiry Date</label>
                                 <input type="text" class="form-control" id="expirydate"
-                                       value="{{ payment_details.get_expiry_date() }}" name="expirydate" disabled>
+                                       value="{{ payment_details.get_expiry_date()[0:4]+'-XX-XX' }}" name="expirydate" disabled>
                             </div>
                             <div class="form-group">
-                                <label for="ccv">CCV</label>
+                                <label for="ccv">CVV</label>
                                 <input type="text" class="form-control" id="ccv"
-                                       value="{{ payment_details.get_ccv() }}" name="ccv" disabled>
+                                       value=" XXX " name="ccv" disabled>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
+    {% endif %}
             <br>
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">

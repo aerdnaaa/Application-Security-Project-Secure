@@ -33,10 +33,11 @@
 </style>
 <div class="container">
     <br>
-    <h2 id="formHeader" class="animated bounceIn">New Password</h2>
+    {% if valid == True %}
+    <h2 id="formHeader" class="animated bounceIn">Reset Password</h2>
     <div class="row justify-content-center">
         <div class="col-7" id="formContent">
-            {% with messages = get_flashed_messages() %}
+            {% with messages = get_flashed_messages(category_filter=["password"]) %}
             {% if messages %}
             {% for message in messages %}
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -45,6 +46,21 @@
                     {{x}}
                     <br>
                 {% endfor %}
+                </span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            {% with messages = get_flashed_messages(category_filter=["success"]) %}
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <span>
+                {{message}} <a href="/Signin" style="text-decoration: none;">Click here</a> to sign in
                 </span>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -62,5 +78,10 @@
             <br>
         </div> <!-- col -->
     </div> <!-- row -->
+    {% else %}
+    <div class="row justify-content-center">
+      <h4 style="margin-top: 20%;">The link has expired. <a href="/Forget" style="text-decoration: none;">Click here</a> to try again.</h4>
+    </div>
+    {% endif %}
 </div> <!-- container -->
 {% endblock %}

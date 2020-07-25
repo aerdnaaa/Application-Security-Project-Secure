@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response
-from flaskr.forms import Register, SignIn, Forget, Recover, PaymentOptions, Reset
+from flaskr.forms import Register, SignIn, Forget, PaymentOptions, Reset
 from flaskr import file_directory, mail
 from flaskr.models.User import User
 from flaskr.models.PaymentInfo import PaymentInfo
@@ -179,79 +179,42 @@ def forget():
         c.execute("SELECT username, email FROM users WHERE email=?", (form.email.data,))
         user = c.fetchone()
         if user != None:
-            # Generate OTP
-            digits = "0123456789"
-            OTP = "" 
-            for i in range(6) : 
-                OTP += digits[math.floor(random.random() * 10)]
-
             # Generate Token
-            s = Serializer('secret_key', 120)
-            token = s.dumps(OTP).decode('UTF-8')
-            c.execute("UPDATE users SET token=? WHERE username=?", (token, user[0]))
-            conn.commit()
+            s = Serializer('secret_key', 300)
+
+            # Store username in token for authentication
+            token = s.dumps(user[0]).decode('UTF-8')
 
             # Send Email to user
             mail.send_message(
                 'Indirect Home Gym Password Reset',
-                sender='ballsnpaddles@gmail.com',
-                recipients=[user[1]],
-                body="Dear {}\n\nYour 6 digit OTP {} will expire in 2 minutes.\n\nRegards\nIndirect Home Gym Team".format(user[0], OTP)
+                sender = 'ballsnpaddles@gmail.com',
+                recipients = [user[1]],
+                #body="Dear {}\n\nWe have received a request to change your password.\nClick on http://127.0.0.1:5000/{} to change your password.\nThis link will expire in 2 minutes.\n\nRegards\nIndirect Home Gym Team".format(token)
+                body = "Hi {},\n\nYou recently requested to reset your password for your account. Click on the link below to change your password\n\n http://127.0.0.1:5000/Reset_Password/{} \n\n If you did not request a password reset, please ignore this email or reply to us to let us know. This link is only valid for the next 5 minutes.\n\nCheers!\nIndirect Home Gym Team".format(user[0], token)
             )
-            print(OTP)
-            return redirect(url_for('user.OTP', username=user[0]))
+            flash("An email has been sent to your account. Please check your email to change you password", "success")
         else:
-            flash("Email does not exist!")
+            flash("Email does not exist!", "danger")
                 
     return render_template("user/Forget.html", user=user, form=form)
 
-@user_blueprint.route("/OTP/<username>", methods=["GET", "POST"])
-def OTP(username):
-    conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
-    c = conn.cursor()
+@user_blueprint.route("/Reset_Password/<token>", methods=["GET", "POST"])
+def reset(token):
     try:
         current_user.get_username()
         return redirect(url_for('main.home'))
     except:
-        if c.execute("SELECT token FROM users WHERE username=?", (username,)).fetchone() != None:
-            user = None
-        else:
-            return redirect(url_for('main.home'))
+        user = None
 
-    form = Recover(request.form)
-    if request.method == "POST" and form.validate():
-        c.execute("SELECT token FROM users WHERE username=?", (username,))
-        token = c.fetchone()[0]
-        s = Serializer('secret_key', 120)
-        try:
-            OTP = s.loads(token)
-            print('The OTP is', OTP)
-        except:
-            flash("Your OTP has Expired")
-        if form.OTP.data == OTP:
-            session['verified'] = True
-            c.execute("UPDATE users SET token=NULL WHERE username=? ", (username,))
-            conn.commit()
-            return redirect(url_for('user.reset', username=username))
-        else:
-            flash('Invalid OTP! Please try again')
-
-        
-        
-
-    return render_template("user/Recover.html", user=user, form=form)
-
-@user_blueprint.route("/Reset_Password/<username>", methods=["GET", "POST"])
-def reset(username):
     try:
-        current_user.get_username()
-        return redirect(url_for('main.home'))
+        # Check if token is valid
+        s = Serializer('secret_key', 300)
+        username = s.loads(token)
+        valid = True
     except:
-        if 'verified' in session:
-            user = None
-        else:
-            return redirect(url_for('main.home'))
-
+        valid = False
+        
     form = Reset(request.form)
     if request.method == "POST" and form.validate():
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
@@ -274,8 +237,7 @@ def reset(username):
             c.execute("UPDATE users SET password=? WHERE username=?", (pw_hash, username))
             conn.commit()
             conn.close()
-            session.pop('verified', None)
-            return redirect(url_for('user.signin'))
+            flash("Your password has been changed!", "success")
 
         else:
             # Goes through check list to check which policy does password fail
@@ -293,7 +255,7 @@ def reset(username):
                 errorMsg.append("Password too simple. Avoid simple combinations and dictionary words")
             flash(errorMsg, 'password')
 
-    return render_template("user/Recover.html", user=user, form=form)
+    return render_template("user/Reset.html", user=user, form=form, valid=valid)
 
 @user_blueprint.route("/Voucher")
 def Voucher():

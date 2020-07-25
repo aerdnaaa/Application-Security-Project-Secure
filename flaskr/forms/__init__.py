@@ -16,9 +16,6 @@ class SignIn(Form):
 class Forget(Form):
     email = EmailField("Email", [validators.InputRequired()])
 
-class Recover(Form):
-    OTP = StringField("OTP", [validators.InputRequired()])
-
 class Reset(Form):
     password = PasswordField("New Password", [validators.InputRequired()])
 

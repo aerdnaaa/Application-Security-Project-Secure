@@ -177,23 +177,23 @@ def forget():
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
         c = conn.cursor()
         c.execute("SELECT username, email FROM users WHERE email=?", (form.email.data,))
-        user = c.fetchone()
-        if user != None:
+        userInfo = c.fetchone()
+        if userInfo != None:
             # Generate Token
             s = Serializer('secret_key', 300)
 
             # Store username in token for authentication
-            token = s.dumps(user[0]).decode('UTF-8')
+            token = s.dumps(userInfo[0]).decode('UTF-8')
 
             # Send Email to user
             mail.send_message(
                 'Indirect Home Gym Password Reset',
                 sender = 'ballsnpaddles@gmail.com',
-                recipients = [user[1]],
-                #body="Dear {}\n\nWe have received a request to change your password.\nClick on http://127.0.0.1:5000/{} to change your password.\nThis link will expire in 2 minutes.\n\nRegards\nIndirect Home Gym Team".format(token)
-                body = "Hi {},\n\nYou recently requested to reset your password for your account. Click on the link below to change your password\n\n http://127.0.0.1:5000/Reset_Password/{} \n\n If you did not request a password reset, please ignore this email or reply to us to let us know. This link is only valid for the next 5 minutes.\n\nCheers!\nIndirect Home Gym Team".format(user[0], token)
+                recipients = [userInfo[1]],
+                body = "Hi {},\n\nYou recently requested to reset your password for your account. Click on the link below to change your password\n\n http://127.0.0.1:5000/Reset_Password/{} \n\n If you did not request a password reset, please ignore this email or reply to us to let us know. This link is only valid for the next 5 minutes.\n\nCheers!\nIndirect Home Gym Team".format(userInfo[0], token)
             )
-            flash("An email has been sent to your account. Please check your email to change you password", "success")
+ 
+            flash("A password reset link has been sent to your email!", "success")
         else:
             flash("Email does not exist!", "danger")
                 

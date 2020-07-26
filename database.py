@@ -100,8 +100,9 @@ c = conn.cursor()
 # # print('rows inserted')
 
 # Insert User 
-# c.execute("INSERT INTO users VALUES ('Admin', 'Admin@mail.com', 'admin', 'what is your mother name', 'joe','y')")
-# c.execute("INSERT INTO users VALUES ('Admin2', 'Admin2@mail.com', 'password', 'what is your mother name', 'joe','y')")
+# c.execute("INSERT INTO users VALUES ('Admin', 'Admin@mail.com', 'admin','y')")
+# c.execute("INSERT INTO users VALUES ('Admin2', 'Admin2@mail.com','password','y')")
+# c.execute("INSERT INTO users VALUES ('Admin3', 'Admin3@mail.com','password','y')")
 # conn.commit()
 # conn.close()
 # print('rows inserted')

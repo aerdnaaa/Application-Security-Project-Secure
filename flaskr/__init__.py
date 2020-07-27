@@ -9,19 +9,19 @@ import sentry_sdk
 from flask_login import LoginManager
 from flaskr.models.User import User
 
-# # sentry sdk for logging
-# from sentry_sdk.integrations.logging import LoggingIntegration
-# from sentry_sdk.integrations.flask import FlaskIntegration
-#
-# # All of this is already happening by default!
-# sentry_logging = LoggingIntegration(
-#     level=logging.INFO,  # Capture info and above as breadcrumbs
-#     event_level=logging.ERROR  # Send errors as events
-# )
-# sentry_sdk.init(
-#     dsn="https://6adb767a90f14dee90f656e1e355f0b1@o412137.ingest.sentry.io/5288433",
-#     integrations=[FlaskIntegration()]
-# )
+# sentry sdk for logging
+from sentry_sdk.integrations.logging import LoggingIntegration
+from sentry_sdk.integrations.flask import FlaskIntegration
+
+# All of this is already happening by default!
+sentry_logging = LoggingIntegration(
+    level=logging.INFO,  # Capture info and above as breadcrumbs
+    event_level=logging.ERROR  # Send errors as events
+)
+sentry_sdk.init(
+    dsn="https://6adb767a90f14dee90f656e1e355f0b1@o412137.ingest.sentry.io/5288433",
+    integrations=[FlaskIntegration()]
+)
 
 app = Flask(__name__)
 api_app = Api(app)

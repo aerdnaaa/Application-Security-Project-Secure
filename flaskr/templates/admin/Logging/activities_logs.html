@@ -1,0 +1,36 @@
+{% extends "admin/baseAdmin.html" %}
+{% block content %}
+<div class="container-fluid">
+    <table class="table">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Details</th>
+                <th scope="col">Type</th>
+                <th scope="col">
+                    Date/Time
+                    <i onclick="toggleSort(this)" class="fa fa-arrow-up"></i>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in data %}
+            <tr>
+                <th scope="row">{{ i[0]}}</th>
+                <td>{{ i[1] }}</td>
+                <td class="{{ i[2] }}">{{ i[2] }}</td>
+                <td>{{ i[3] }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+    <script>
+        function toggleSort(x) {
+            x.classList.toggle("fa-arrow-down");
+            x.classList.toggle("fa-arrow-up");
+        }
+    </script>
+
+{% endblock %}

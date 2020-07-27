@@ -15,10 +15,12 @@ import hashlib
 from password_strength import PasswordPolicy, PasswordStats
 
 # FLASK LOGIN
-from flask_login import current_user, login_user, logout_user, login_required
+from flask_login import current_user, login_user, logout_user
 
 user_blueprint = Blueprint('user', __name__)
 
+from datetime import date, datetime
+from flaskr.services.loggingservice import Logging
 
 # ============================================= Sign in/ Register ===============================================#
 @user_blueprint.route("/Register", methods=["GET", "POST"])
@@ -91,7 +93,8 @@ def signin():
         pw_hash = hashlib.sha512(signin.password.data.encode()).hexdigest()
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
         c = conn.cursor()
-        c.execute("SELECT rowid, * FROM users WHERE username=? AND password=?", (signin.username.data, pw_hash))
+        #c.execute("SELECT rowid, * FROM users WHERE username=? AND password=?", (signin.username.data, pw_hash))
+        c.execute("SELECT rowid, * FROM users WHERE username=?", (signin.username.data,))
         conn.commit()
         user = c.fetchone()
 
@@ -99,14 +102,21 @@ def signin():
         if user == None:
             flash("Incorrect username or password")
         else:
-            userObj = User(user[0], user[1], user[2], user[3], user[4])
-            if userObj.get_admin() == 'y':
-                login_user(userObj)
-                return redirect(url_for('admin.admin'))
+            if user[3] == pw_hash:
+                userObj = User(user[0], user[1], user[2], user[3], user[4])
+                if userObj.get_admin() == 'y':
+                    login_user(userObj)
+                    return redirect(url_for('admin.admin'))
+                else:
+                    login_user(userObj)
+                    return redirect(url_for('main.home'))
             else:
-                login_user(userObj)
-                return redirect(url_for('main.home'))
-
+                username = signin.username.data
+                details = f"Failed login attempt with the username of {username}."
+                Loggingtype = "Login"
+                Logging(Loggingtype, details)
+                user = None
+                flash("Incorrect username or password")
         conn.close()
     return render_template("user/SignIn.html", form=signin, user=user)
 
@@ -160,8 +170,11 @@ def logout():
 #     return render_template("user/Profile.html", user=user, form=payment_form, payment_details=payment_details)
 
 @user_blueprint.route("/Profile", methods=["GET", "POST"])
-@login_required
 def Profile():
+    try:
+        current_user.get_username()
+    except:
+        return redirect(url_for('main.error404'))
     user = current_user
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()

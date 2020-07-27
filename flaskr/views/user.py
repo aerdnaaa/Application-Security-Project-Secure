@@ -6,7 +6,6 @@ from flaskr.models.PaymentInfo import PaymentInfo
 import pyffx
 from flask_mail import Message
 import sqlite3, os
-import math, random
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 # HASH
@@ -42,15 +41,16 @@ def register():
                 numbers=1,  # need min. 1 digits
                 special=1,  # need min. 1 special characters
             )
-            errorMsg = [] # List to store error messages
-            
+            errorMsg = []  # List to store error messages
+
             # Checks password against policy and stores violations in list
-            check = policy.test(register.password.data) 
+            check = policy.test(register.password.data)
             strengthLvl = PasswordStats(register.password.data).strength()
             # If password has 0 errors and meets complexity requirement, password hashed and stored in database
-            if check == [] and  strengthLvl> 0.5:
+            if check == [] and strengthLvl > 0.5:
                 pw_hash = hashlib.sha512(register.password.data.encode()).hexdigest()
-                c.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (register.username.data, register.email.data, pw_hash, 'n'))
+                c.execute("INSERT INTO users VALUES (?, ?, ?, ?)",
+                          (register.username.data, register.email.data, pw_hash, 'n'))
                 conn.commit()
                 conn.close()
                 return redirect(url_for('user.signin'))
@@ -170,7 +170,7 @@ def Profile():
     paymentinformation = c.fetchone()
     if paymentinformation:
         payment_details = PaymentInfo(paymentinformation[1], paymentinformation[2], paymentinformation[3],
-                                               int(paymentinformation[4]))
+                                      int(paymentinformation[4]))
     else:
         payment_details = PaymentInfo("", "", "", "")
 
@@ -182,14 +182,15 @@ def Profile():
         result = c.fetchone()
         if not result:
             e1 = pyffx.Integer(b'12376987ca98sbdacsbjkdwd898216jasdnsd98213912', length=16)
-            e2 = pyffx.Integer(b'12376987ca98sbdacsbjkdwd898216jasdnsd98213912', length=len(str(payment_form.SecretNumber.data)))
+            e2 = pyffx.Integer(b'12376987ca98sbdacsbjkdwd898216jasdnsd98213912',
+                               length=len(str(payment_form.SecretNumber.data)))
             encrypted_card_no = e1.encrypt(payment_form.CreditCardno.data)
             encrypted_card_CVV = e2.encrypt(payment_form.SecretNumber.data)
             c.execute("INSERT INTO paymentdetails VALUES ('{}','{}','{}','{}','{}')".format(user.get_username(),
-                                                                                                 payment_form.Name.data,
-                                                                                                 encrypted_card_no,
-                                                                                                 payment_form.ExpiryDate.data,
-                                                                                                 encrypted_card_CVV))
+                                                                                            payment_form.Name.data,
+                                                                                            encrypted_card_no,
+                                                                                            payment_form.ExpiryDate.data,
+                                                                                            encrypted_card_CVV))
             conn.commit()
             conn.close()
             return redirect(url_for('user.Profile'))
@@ -199,8 +200,9 @@ def Profile():
         cn = payment_details.get_credit_card_number()
         e1 = pyffx.Integer(b'12376987ca98sbdacsbjkdwd898216jasdnsd98213912', length=16)
         cn = e1.decrypt(cn)
-        return render_template("user/Profile.html", user=user,payment_details = payment_details,form=payment_form,cn=str(cn))
-    return render_template("user/Profile.html", user=user,payment_details = payment_details,form=payment_form)
+        return render_template("user/Profile.html", user=user, payment_details=payment_details, form=payment_form,
+                               cn=str(cn))
+    return render_template("user/Profile.html", user=user, payment_details=payment_details, form=payment_form)
 
 
 @user_blueprint.route("/Forget", methods=["GET", "POST"])
@@ -227,15 +229,16 @@ def forget():
             # Send Email to user
             mail.send_message(
                 'Indirect Home Gym Password Reset',
-                sender = 'ballsnpaddles@gmail.com',
-                recipients = [userInfo[1]],
-                body = "Hi {},\n\nYou recently requested to reset your password for your account. Click on the link below to change your password\n\n http://127.0.0.1:5000/Reset_Password/{} \n\n If you did not request a password reset, please ignore this email or reply to us to let us know. This link is only valid for the next 5 minutes.\n\nCheers!\nIndirect Home Gym Team".format(userInfo[0], token)
+                sender='ballsnpaddles@gmail.com',
+                recipients=[userInfo[1]],
+                body="Hi {},\n\nYou recently requested to reset your password for your account. Click on the link below to change your password\n\n http://127.0.0.1:5000/Reset_Password/{} \n\n If you did not request a password reset, please ignore this email or reply to us to let us know. This link is only valid for the next 5 minutes.\n\nCheers!\nIndirect Home Gym Team".format(
+                    userInfo[0], token)
             )
- 
+
             flash("A password reset link has been sent to your email!", "success")
         else:
             flash("Email does not exist!", "danger")
-                
+
     return render_template("user/Forget.html", user=user, form=form)
 
 
@@ -254,7 +257,7 @@ def reset(token):
         valid = True
     except:
         valid = False
-        
+
     form = Reset(request.form)
     if request.method == "POST" and form.validate():
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
@@ -266,13 +269,13 @@ def reset(token):
             numbers=1,  # need min. 1 digits
             special=1,  # need min. 1 special characters
         )
-        errorMsg = [] # List to store error messages
-        
+        errorMsg = []  # List to store error messages
+
         # Checks password against policy and stores violations in list
-        check = policy.test(form.password.data) 
+        check = policy.test(form.password.data)
         strengthLvl = PasswordStats(form.password.data).strength()
         # If password has 0 errors and meets complexity requirement, password hashed and stored in database
-        if check == [] and  strengthLvl> 0.5:
+        if check == [] and strengthLvl > 0.5:
             pw_hash = hashlib.sha512(form.password.data.encode()).hexdigest()
             c.execute("UPDATE users SET password=? WHERE username=?", (pw_hash, username))
             conn.commit()
@@ -296,4 +299,3 @@ def reset(token):
             flash(errorMsg, 'password')
 
     return render_template("user/Reset.html", user=user, form=form, valid=valid)
-

@@ -1,20 +1,25 @@
 from flask import request, jsonify
 from flask_restful import Resource
 import sqlite3, os, random, string
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from flaskr import file_directory
+
 
 def get_random_alphanumeric_string(length):
     letters_and_digits = string.ascii_letters + string.digits
     result_str = ''.join((random.choice(letters_and_digits) for i in range(length)))
     return result_str
 
+
 class UserVoucher(Resource):
+    @jwt_required
     def get(self, username):
+        current_user = get_jwt_identity()
+        print(current_user)
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
-        # TODO change user_vouchers to vouchers table
-        c.execute("SELECT * FROM vouchers WHERE user_id = '{}'".format(username))
+        c.execute("SELECT * FROM vouchers WHERE username = ?", username)
         conn.commit()
         vouchers = [dict(row) for row in c.fetchall()]
         conn.close()
@@ -41,7 +46,14 @@ class UserVoucher(Resource):
         voucher_status = "unused"
         used_date = ""
 
-        c.execute("INSERT INTO vouchers VALUES ('{}', '{}', '{}', '{}', {}, '{}', '{}', '{}')".format(voucher_title, voucher_code, voucher_description, voucher_image, voucher_amount, voucher_status, used_date, username))
+        c.execute("INSERT INTO vouchers VALUES ('{}', '{}', '{}', '{}', {}, '{}', '{}', '{}')".format(voucher_title,
+                                                                                                      voucher_code,
+                                                                                                      voucher_description,
+                                                                                                      voucher_image,
+                                                                                                      voucher_amount,
+                                                                                                      voucher_status,
+                                                                                                      used_date,
+                                                                                                      username))
         conn.commit()
         conn.close()
 
@@ -76,5 +88,3 @@ class UserVoucher(Resource):
                 conn.close()
 
                 return jsonify(data=f"Voucher with the code {code} from username {username} has already been used.")
-
-

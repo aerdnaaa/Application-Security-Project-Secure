@@ -3,7 +3,7 @@ from flaskr.models.User import User
 from flaskr.forms import ContactUs, Reviews
 import sqlite3, os
 from flaskr import file_directory
-from flask_login import current_user, login_required
+from flask_login import current_user
 
 main_blueprint = Blueprint('main', __name__)
 
@@ -69,7 +69,7 @@ def emailus():
     c = conn.cursor()
     if request.method == "POST" and contactUsForm.validate():
         
-        c.execute("""INSERT INTO query VALUES ("{}", "{}", "{}","{}")""".format(contactUsForm.name.data,contactUsForm.email.data,contactUsForm.subject.data,contactUsForm.message.data)) 
+        c.execute("""INSERT INTO query VALUES (?, ?, ?,?)""",(contactUsForm.name.data,contactUsForm.email.data,contactUsForm.subject.data,contactUsForm.message.data)) 
         conn.commit()
         conn.close()
         return redirect(url_for('main.emailus'))
@@ -86,15 +86,20 @@ def reviews(productid):
     reviewsform = Reviews(request.form)
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()
-    c.execute("SELECT rowid,* FROM products WHERE rowid={}".format(productid))
+    c.execute("SELECT rowid,* FROM products WHERE rowid=?",(productid,))
     product = c.fetchone()
 
     c.execute("SELECT * FROM reviews")
     reviews=c.fetchall()
 
     if request.method == "POST" and reviewsform.validate():
-        c.execute("""INSERT INTO reviews VALUES ("{}", "{}", "{}")""".format(product[0], user.get_username(), reviewsform.reviews.data)) 
+        c.execute("""INSERT INTO reviews VALUES (?, ?, ?)""",(product[0], user.get_username(), reviewsform.reviews.data)) 
         conn.commit()
         return redirect(url_for('main.reviews', productid=productid))
     
     return render_template("main/Reviews.html", user=user, product=product, reviews=reviews, form=reviewsform)
+
+
+@main_blueprint.route("/error")
+def error404():
+    return render_template("main/Error404.html")

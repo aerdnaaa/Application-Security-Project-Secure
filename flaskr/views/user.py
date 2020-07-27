@@ -16,7 +16,7 @@ import hashlib
 from password_strength import PasswordPolicy, PasswordStats
 
 # FLASK LOGIN
-from flask_login import current_user, login_user, logout_user, login_required
+from flask_login import current_user, login_user, logout_user
 
 user_blueprint = Blueprint('user', __name__)
 
@@ -160,8 +160,11 @@ def logout():
 #     return render_template("user/Profile.html", user=user, form=payment_form, payment_details=payment_details)
 
 @user_blueprint.route("/Profile", methods=["GET", "POST"])
-@login_required
 def Profile():
+    try:
+        current_user.get_username()
+    except:
+        return redirect(url_for('main.error404'))
     user = current_user
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()

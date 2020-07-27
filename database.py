@@ -200,3 +200,9 @@ c = conn.cursor()
 # c.execute("SELECT * FROM users WHERE username='' UNION SELECT sql, '2', '3', '4', '5' FROM sqlite_master-- ")
 # print(c.fetchone())
 
+
+#setting admin status
+# c.execute("update users set admin ='y' where username='Admin'")
+# conn.commit()
+# conn.close()
+# print('table updated')

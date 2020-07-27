@@ -47,7 +47,6 @@
 
   </div>
   <!-- /.container -->
-
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -74,14 +73,19 @@
                 </div>
             </div>
         </div>
-
         <div class="modal-footer">
           <input id="submitButton" style="text-align: center;" type="submit" value="Submit" class="btn btn-primary"/>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
+        {%else%}
+        <div class="modal-body">
+          <h6>Please Login to comment</h6>
+        </div>
+        {% endif %}
+
+
       </div>
     </div>
-    {% endif %}
   </form>
   </div>
   

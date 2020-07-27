@@ -146,8 +146,8 @@ def Queries():
         return render_template("admin/Query/Queries.html", title="query", query=query)
 
 
-@admin_blueprint.route("/logs")
-def logs():
+@admin_blueprint.route("/technical_logs")
+def technical_logs():
     isAdmin = False
     try:
         if current_user.get_admin()=='y':
@@ -163,4 +163,23 @@ def logs():
         header = {"Authorization": f"Bearer {token}"}
         my_response = requests.get(url, headers=header)
         data = my_response.json()
-        return render_template("admin/Logging/log.html", title="Logs", data=data)
+        return render_template("admin/Logging/technical_log.html", title="Technical Logs", data=data)
+
+        
+@admin_blueprint.route("/activities_logs")
+def activities_logs():
+    isAdmin = False
+    try:
+        if current_user.get_admin()=='y':
+            isAdmin = True
+        else:
+            return redirect(url_for('main.error404'))
+    except:
+        return redirect(url_for('main.error404'))
+    if isAdmin:
+        conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
+        c = conn.cursor()
+        c.execute("Select * from logs")
+        queries = c.fetchall()
+        conn.close()
+        return render_template("admin/Logging/activities_logs.html",title='Activities Logs', data=queries)

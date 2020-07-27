@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,12 +15,12 @@
     <link rel="stylesheet" href="{{ url_for('static',filename='dist/css/adminlte.css') }}">
     <!-- overlayScrollbars -->
     <link rel="stylesheet"
-          href="{{ url_for('static',filename='plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
+        href="{{ url_for('static',filename='plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
     <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
@@ -32,309 +33,300 @@
         }
     </style>
 </head>
+
 <body class="hold-transition sidebar-mini layout-fixed">
-<div class="wrapper">
+    <div class="wrapper">
 
-    <!-- Navbar -->
-    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
-        <!-- Left navbar links -->
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
-            </li>
-            <li class="nav-item d-none d-sm-inline-block">
-                <a href="/Admin" class="nav-link">Home</a>
-            </li>
-        </ul>
-
-        <!-- Right navbar links -->
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown">
-                <a class="nav-link" href="/logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                </a>
-            </li>
-            <div class="dropdown-divider"></div>
-
-</div>
-
-</li>
-</ul>
-</nav>
-<!-- /.navbar -->
-
-<!-- Main Sidebar Container -->
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <!-- Brand Logo -->
-    <a href="/Admin" class="brand-link">
-        <img src="{{ url_for('static',filename='dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo"
-             class="brand-image img-circle elevation-3"
-             style="opacity: .8">
-        <span class="brand-text font-weight-light">Balls and Paddles</span>
-    </a>
-
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <!-- Sidebar user panel (optional) -->
-        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-            <div class="image">
-                <img src="{{ url_for('static',filename='dist/img/user2-160x160.jpg') }}" class="img-circle elevation-2"
-                     alt="User Image">
-            </div>
-            <div class="info">
-                <a href="#" class="d-block">Admin</a>
-            </div>
-        </div>
-
-        <!-- Sidebar Menu -->
-        <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                <!-- Add icons to the links using the .nav-icon class
-                     with font-awesome or any other icon font library -->
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <!-- Left navbar links -->
+            <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a href="/Admin" class="nav-link">
-                        <i class="fas fa-chart-line" style="margin-left: 5px;"></i>
-                        <p style="padding-left: 2px;">
-                            &nbsp;Dashboard
-                        </p>
-                    </a>
+                    <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
                 </li>
-
-                <li class="nav-item has-treeview" id="dashboardmenu">
-                    <a href="#" class="nav-link" onclick="openMenu();">
-                        &nbsp;<i class="fas fa-table-tennis"></i>
-                        <p>
-                            &nbsp;&nbsp;Products
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview animated bounceInDown" style="animation-duration: 0.01;">
-                        <li class="nav-item">
-                            <a href="{{ url_for('admin.show_product') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>View Products</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ url_for('admin.add_product') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Add Products</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="nav-item has-treeview" id="vouchermenu">
-                    <a href="#" class="nav-link" onclick="openMenu4();">
-                        &nbsp;<i class="fas fa-tag"></i>
-                        <p>
-                            &nbsp;&nbsp;Vouchers
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview animated bounceInDown" style="animation-duration: 0.01;">
-                        <li class="nav-item">
-                            <a href="{{ url_for('admin.show_voucher') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>View Vouchers</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ url_for('admin.add_voucher') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Add Vouchers</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="{{ url_for('admin.add_user_voucher') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Add User Vouchers</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="nav-item has-treeview" id="ordermenu">
-                    <a href="#" class="nav-link" onclick="openMenu3();">
-                        &nbsp;<i class="fas fa-inbox"></i>
-                        <p>
-                            &nbsp;&nbsp;Orders
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview animated bounceInDown" style="animation-duration: 0.05;">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Search Order</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Pending Approval</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Shipped Out</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Completed</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Cancelled</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        &nbsp;<i class="fas fa-question"></i>
-                        <p>
-                            &nbsp;&nbsp;&nbsp;FAQ
-                        </p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="/Queries" class="nav-link">
-                        <i class="fas fa-paper-plane"></i>
-                        <p>
-                            &nbsp;&nbsp;&nbsp;Queries
-                        </p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-images"></i>
-                        <p>
-                            &nbsp;&nbsp;&nbsp;Gallery
-                        </p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="/manage_user" class="nav-link">
-                        <i class="fas fa-users"></i>
-                        <p>
-                            &nbsp;&nbsp;Manage Users
-                        </p>
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-money-check-alt"></i>
-                        <p>
-                            &nbsp;&nbsp;Promo Codes
-                        </p>
-                    </a>
-                </li>
-
-                <li class="nav-item has-treeview" id="archivemenu">
-                    <a href="#" class="nav-link" onclick="openMenu2();">
-                        &nbsp;<i class="fas fa-archive"></i>
-                        <p>
-                            &nbsp;&nbsp;Archives
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview animated bounceInDown" style="animation-duration: 0.05;">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Orders</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Queries</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>FAQs</p>
-                            </a>
-                        </li>
-                    </ul>
+                <li class="nav-item d-none d-sm-inline-block">
+                    <a href="/Admin" class="nav-link">Home</a>
                 </li>
             </ul>
-        </nav>
-        <!-- /.sidebar-menu -->
+
+            <!-- Right navbar links -->
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link" href="/logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
+                </li>
+                <div class="dropdown-divider"></div>
+
     </div>
-    <!-- /.sidebar -->
-</aside>
 
-<div class="content-wrapper">
-    {% block content %}
+    </li>
+    </ul>
+    </nav>
+    <!-- /.navbar -->
+
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <!-- Brand Logo -->
+        <a href="/Admin" class="brand-link">
+            <img src="{{ url_for('static',filename='dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo"
+                class="brand-image img-circle elevation-3" style="opacity: .8">
+            <span class="brand-text font-weight-light">Balls and Paddles</span>
+        </a>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Sidebar user panel (optional) -->
+            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                <div class="image">
+                    <img src="{{ url_for('static',filename='dist/img/user2-160x160.jpg') }}"
+                        class="img-circle elevation-2" alt="User Image">
+                </div>
+                <div class="info">
+                    <a href="#" class="d-block">Admin</a>
+                </div>
+            </div>
+
+            <!-- Sidebar Menu -->
+            <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                    data-accordion="false">
+                    <!-- Add icons to the links using the .nav-icon class
+                     with font-awesome or any other icon font library -->
+                    <li class="nav-item">
+                        <a href="/Admin" class="nav-link">
+                            <i class="fas fa-chart-line" style="margin-left: 5px;"></i>
+                            <p style="padding-left: 2px;">
+                                &nbsp;Dashboard
+                            </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item has-treeview" id="dashboardmenu">
+                        <a href="#" class="nav-link" onclick="openMenu('dashboardmenu');">
+                            &nbsp;<i class="fas fa-table-tennis"></i>
+                            <p>
+                                &nbsp;&nbsp;Products
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview animated bounceInDown" style="animation-duration: 0.01;">
+                            <li class="nav-item">
+                                <a href="{{ url_for('admin.show_product') }}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>View Products</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ url_for('admin.add_product') }}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Add Products</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item has-treeview" id="vouchermenu">
+                        <a href="#" class="nav-link" onclick="openMenu('vouchermenu');">
+                            &nbsp;<i class="fas fa-tag"></i>
+                            <p>
+                                &nbsp;&nbsp;Vouchers
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview animated bounceInDown" style="animation-duration: 0.01;">
+                            <li class="nav-item">
+                                <a href="{{ url_for('admin.show_voucher') }}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>View Vouchers</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ url_for('admin.add_voucher') }}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Add Vouchers</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ url_for('admin.add_user_voucher') }}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Add User Vouchers</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item has-treeview" id="ordermenu">
+                        <a href="#" class="nav-link" onclick="openMenu('ordermenu');">
+                            &nbsp;<i class="fas fa-inbox"></i>
+                            <p>
+                                &nbsp;&nbsp;Orders
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview animated bounceInDown" style="animation-duration: 0.05;">
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Search Order</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Pending Approval</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Shipped Out</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Completed</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Cancelled</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item has-treeview" id="loggingmenu">
+                        <a href="#" class="nav-link" onclick="openMenu('loggingmenu');">
+                            &nbsp;<i class="fas fa-question"></i>
+                            <p>
+                                &nbsp;&nbsp;Logs
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview animated bounceInDown" style="animation-duration: 0.01;">
+                            <li class="nav-item">
+                                <a href="{{ url_for('admin.technical_logs') }}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Technical Logs</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ url_for('admin.activities_logs') }}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Activities Logs</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="/Queries" class="nav-link">
+                            <i class="fas fa-paper-plane"></i>
+                            <p>
+                                &nbsp;&nbsp;&nbsp;Queries
+                            </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-images"></i>
+                            <p>
+                                &nbsp;&nbsp;&nbsp;Gallery
+                            </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="/manage_user" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <p>
+                                &nbsp;&nbsp;Manage Users
+                            </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-money-check-alt"></i>
+                            <p>
+                                &nbsp;&nbsp;Promo Codes
+                            </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item has-treeview" id="archivemenu">
+                        <a href="#" class="nav-link" onclick="openMenu('archivemenu');">
+                            &nbsp;<i class="fas fa-archive"></i>
+                            <p>
+                                &nbsp;&nbsp;Archives
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview animated bounceInDown" style="animation-duration: 0.05;">
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Orders</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Queries</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>FAQs</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+            <!-- /.sidebar-menu -->
+        </div>
+        <!-- /.sidebar -->
+    </aside>
+
+    <div class="content-wrapper">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    {% block scripts %}
     {% endblock %}
-</div>
 
-{% block scripts %}
-{% endblock %}
-
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
         integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
         crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
         integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
         crossorigin="anonymous"></script>
-<!-- Bootstrap 4 -->
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    <!-- Bootstrap 4 -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
-<!-- overlayScrollbars -->
-<script src="{{ url_for('static',filename='plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
-<!-- AdminLTE App -->
-<script src="{{ url_for('static',filename='dist/js/adminlte.js') }}"></script>
-<script>
-    function openMenu() {
-        const classname = document.getElementById('dashboardmenu').getAttribute('class');
-        if (classname == 'nav-item has-treeview') {
-            document.getElementById('dashboardmenu').setAttribute('class', 'nav-item has-treeview menu-open');
-        } else {
-            document.getElementById('dashboardmenu').setAttribute('class', 'nav-item has-treeview');
+    <!-- overlayScrollbars -->
+    <script
+        src="{{ url_for('static',filename='plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
+    <!-- AdminLTE App -->
+    <script src="{{ url_for('static',filename='dist/js/adminlte.js') }}"></script>
+    <script>
+        function openMenu(id) {
+            const classname = document.getElementById(id).getAttribute('class');
+            if (classname == 'nav-item has-treeview') {
+                document.getElementById(id).setAttribute('class', 'nav-item has-treeview menu-open');
+            } else {
+                document.getElementById(id).setAttribute('class', 'nav-item has-treeview');
+            }
         }
-    }
-
-    function openMenu2() {
-        const classname = document.getElementById('archivemenu').getAttribute('class');
-        if (classname == 'nav-item has-treeview') {
-            document.getElementById('archivemenu').setAttribute('class', 'nav-item has-treeview menu-open');
-        } else {
-            document.getElementById('archivemenu').setAttribute('class', 'nav-item has-treeview');
-        }
-    }
-
-    function openMenu3() {
-        const classname = document.getElementById('ordermenu').getAttribute('class');
-        if (classname == 'nav-item has-treeview') {
-            document.getElementById('ordermenu').setAttribute('class', 'nav-item has-treeview menu-open');
-        } else {
-            document.getElementById('ordermenu').setAttribute('class', 'nav-item has-treeview');
-        }
-    }
-
-    function openMenu4() {
-        const classname = document.getElementById('vouchermenu').getAttribute('class');
-        if (classname == 'nav-item has-treeview') {
-            document.getElementById('vouchermenu').setAttribute('class', 'nav-item has-treeview menu-open');
-        } else {
-            document.getElementById('vouchermenu').setAttribute('class', 'nav-item has-treeview');
-        }
-    }
-</script>
+    </script>
 </body>
+
 </html>

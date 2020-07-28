@@ -100,4 +100,3 @@ def handle_404(error):
     Loggingtype = "URL Logging"
     Logging(Loggingtype, details)
     return render_template('main/Error404.html'), 404
-    

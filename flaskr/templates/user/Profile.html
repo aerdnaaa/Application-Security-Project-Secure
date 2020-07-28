@@ -95,16 +95,6 @@
                 <input type="text" class="form-control" id="email" value="{{ user.get_email() }}" name="email"
                        disabled>
             </div>
-            <div class="form-group">
-                <label for="email">Security Question</label>
-                <input type="text" class="form-control" id="email" value="" name="email"
-                       disabled>
-            </div>
-            <div class="form-group">
-                <label for="email">Answer</label>
-                <input type="text" class="form-control" id="email" value="" name="email"
-                       disabled>
-            </div>
         </form>
 
         <br>
@@ -244,13 +234,13 @@
                             {{ render_field(form.Name, class="form-control") }}
                         </div>
                         <div class="form-group">
-                            {{ render_field(form.CreditCardno, class="form-control") }}
+                            {{ render_field(form.CreditCardno, maxlength = "16", class="form-control") }}
                         </div>
                         <div class="form-group">
                             {{ render_field(form.ExpiryDate, class="form-control") }}
                         </div>
                         <div class="form-group">
-                            {{ render_field(form.SecretNumber, class="form-control") }}
+                            {{ render_field(form.SecretNumber, maxlength = "3", class="form-control") }}
                         </div>
 
                     </div>

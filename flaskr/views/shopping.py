@@ -32,7 +32,7 @@ def ShoppingCart():
         voucher_code = session['voucher']
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
         c = conn.cursor()
-        c.execute("SELECT amount from vouchers where code='{}'".format(voucher_code))
+        c.execute("SELECT amount from vouchers where code=? ", (voucher_code,))
         amount = c.fetchone()
         result_cost -= amount[0]
     else:
@@ -122,7 +122,6 @@ def Products():
 
     search = SearchForm(request.form)
     if request.method == "POST":
-        # Pass product into url directly (Weak code)
         return redirect(url_for('shopping.Search', product=search.Search.data))
 
     return render_template("shopping/Products.html", user=user, form=search, products=products)
@@ -141,13 +140,11 @@ def Search(product):
     c = conn.cursor()
     c.execute("SELECT rowid, * FROM products WHERE name=? ", (product,))
     results = c.fetchall()
-    print(results)
     conn.close()
 
     # Search Form
     form = SearchForm(request.form)
     if request.method == "POST":
-        # Pass prodduct into url directly (Weak code)
         return redirect(url_for('shopping.Search', product=form.Search.data))
 
     return render_template("shopping/Search.html", user=user, products=results, search=product, form=form)

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response, abort
 from flaskr.forms import Register, SignIn, Forget, PaymentOptions, Reset
 from flaskr import file_directory, mail
 from flaskr.models.User import User
@@ -174,7 +174,7 @@ def Profile():
     try:
         current_user.get_username()
     except:
-        return redirect(url_for('main.error404'))
+        abort(404)
     user = current_user
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()

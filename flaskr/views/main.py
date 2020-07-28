@@ -99,7 +99,7 @@ def reviews(productid):
     
     return render_template("main/Reviews.html", user=user, product=product, reviews=reviews, form=reviewsform)
 
-
-@main_blueprint.route("/error")
-def error404():
-    return render_template("main/Error404.html")
+@main_blueprint.app_errorhandler(404)
+def handle_404(error):
+    return render_template('main/Error404.html'), 404
+    

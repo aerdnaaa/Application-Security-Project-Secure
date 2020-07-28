@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session, request, redirect, url_for, jsonify
+from flask import Blueprint, render_template, session, request, redirect, url_for, jsonify, abort
 from flaskr.models.User import User
 from flaskr.forms import SearchForm, Reviews
 import sqlite3, os, requests
@@ -60,6 +60,14 @@ def checkout():
     except:
         user = None
 
+    # Check if cart is in session or empty
+    if 'cart' in session:
+        cart = session['cart']
+        if cart == []:
+            return redirect(url_for('main.home'))
+    else:
+        return redirect(url_for('main.home'))
+
     if 'username' in session and 'voucher' in session:
         url = "http://localhost:5000/api/userVoucher/" + session["username"]
         response = requests.put(url, json={"code": session["voucher"]})
@@ -87,8 +95,9 @@ def addToCart(productID):
     c.execute(" SELECT * FROM products WHERE rowid=? ", (productID))
     item = c.fetchone()
     # Check if product is inactive
+    # If product not active, display error 404 page
     if item[6] == "inactive":
-        return redirect(url_for('shopping.Products'))
+        abort(404)
     else:
         cart.append(item)
         session['cart'] = cart

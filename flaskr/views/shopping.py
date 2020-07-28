@@ -96,7 +96,7 @@ def addToCart(productID):
     item = c.fetchone()
     # Check if product is inactive
     # If product not active, display error 404 page
-    if item[6] == "inactive":
+    if item == None or item[6] == "inactive":
         abort(404)
     else:
         cart.append(item)

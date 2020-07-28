@@ -4,6 +4,7 @@ from flaskr.forms import ContactUs, Reviews
 import sqlite3, os
 from flaskr import file_directory
 from flask_login import current_user
+from flaskr.services.loggingservice import Logging
 
 main_blueprint = Blueprint('main', __name__)
 
@@ -101,5 +102,9 @@ def reviews(productid):
 
 @main_blueprint.app_errorhandler(404)
 def handle_404(error):
+    path_info = request.url
+    details = f"Attempted to access invalid webpage via {path_info}"
+    Loggingtype = "URL Logging"
+    Logging(Loggingtype, details)
     return render_template('main/Error404.html'), 404
     

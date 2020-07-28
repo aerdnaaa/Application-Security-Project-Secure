@@ -95,7 +95,6 @@ def signin():
         c = conn.cursor()
         #c.execute("SELECT rowid, * FROM users WHERE username=? AND password=?", (signin.username.data, pw_hash))
         c.execute("SELECT rowid, * FROM users WHERE username=?", (signin.username.data,))
-        conn.commit()
         user = c.fetchone()
 
         # Patched code: Gives ambiguous error message

@@ -7,6 +7,7 @@ import pyffx
 from flask_mail import Message
 import sqlite3, os
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from flaskr.services.loggingservice import Logging
 
 # HASH
 import hashlib
@@ -18,9 +19,6 @@ from password_strength import PasswordPolicy, PasswordStats
 from flask_login import current_user, login_user, logout_user
 
 user_blueprint = Blueprint('user', __name__)
-
-from datetime import date, datetime
-from flaskr.services.loggingservice import Logging
 
 
 # ============================================= Sign in/ Register ===============================================#

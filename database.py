@@ -8,6 +8,14 @@ conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
 # Create cursor
 c = conn.cursor()
 
+# Create log table
+c.execute("""CREATE TABLE logs (
+    LogID integer primary key autoincrement,
+    LogDetails text,
+    LogType text,
+    LogDateTime varchar
+    )""")
+print('table created')
 
 # Create user table
 # c.execute("""CREATE TABLE users (

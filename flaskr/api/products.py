@@ -46,14 +46,44 @@ class Products(Resource):
             product_cost_price = request.form.get('productCostPriceInput')
             product_category = request.form.get('productCategory')
 
+            # validate input to not be none
+            if None in {product_name, product_img, product_description, product_selling_price, product_cost_price, product_category}:
+                response = jsonify(data="Missing fields.")
+                response.status_code = 400
+                return response
+
+            # validate selling price and cost price
+            try:
+                product_selling_price = float(product_selling_price)
+                product_cost_price = float(product_cost_price)
+                if product_selling_price < 0 or product_cost_price < 0:
+                    response = jsonify(data="Either selling price or cost price is less than 0.")
+                    response.status_code = 400
+                    return response
+                if product_selling_price < product_cost_price:
+                    response = jsonify(data="Selling price is less than cost price.")
+                    response.status_code = 400
+                    return response
+            except:
+                response = jsonify(data="Either selling price or cost price is not an integer or float.")
+                response.status_code = 400
+                return response
+
             filename = product_img.filename
+
+            # validate filename
+            if filename[-3:] not in ["png", "jpg", "peg"]:
+                response = jsonify(data="Invalid file type.")
+                response.status_code = 400
+                return response
+
             filepath = 'products/' + filename
             product_img.save(os.path.join(file_directory, 'flaskr/static/img/products', filename))
 
             conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
             c = conn.cursor()
-            c.execute(
-                f"INSERT INTO products VALUES ('{product_name}', '{filepath}', '{product_description}', '{product_selling_price}', '{product_cost_price}', '{product_category}','active')")
+            c.execute("INSERT INTO products VALUES (?, ?, ?, ?, ?, ?,'active')",
+                (product_name, filepath, product_description, product_selling_price, product_cost_price, product_category))
             conn.commit()
 
             if request.user_agent.string[:14] != "PostmanRuntime":
@@ -61,7 +91,8 @@ class Products(Resource):
 
             return jsonify(data="Success")
         else:
-            response = jsonify(data="Unauthorized access")
+            # need to log
+            response = jsonify(data="You do not have authorized access to perform this action.")
             response.status_code = 401
             return response
 
@@ -73,15 +104,30 @@ class Products(Resource):
             request_json_data = request.get_json(force=True)
 
             product_name = request_json_data['product_name']
-            product_status = request_json_data['product_status']
+            product_status = request_json_data['product_status'].lower()
 
             conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
             c = conn.cursor()
-            c.execute(f"UPDATE products SET status = '{product_status}' WHERE name = '{product_name}'")
+
+            # validate product name, check if it is in database
+            c.execute("SELECT * FROM products WHERE name = ?", (product_name,))
+            if not c.fetchone():
+                response = jsonify(f"Invalid product name, product name {product_name} not found.")
+                response.status_code = 400
+                return response
+
+            # validate product status
+            if product_status not in ["inactive", "active"]:
+                response = jsonify("Invalid product status")
+                response.status_code = 400
+                return response
+
+            c.execute("UPDATE products SET status = ? WHERE name = ?", (product_status, product_name))
             conn.commit()
 
             return jsonify(data="Success")
         else:
-            response = jsonify(data="Unauthorized access")
+            # need to log
+            response = jsonify(data="You do not have authorized access to perform this action.")
             response.status_code = 401
             return response

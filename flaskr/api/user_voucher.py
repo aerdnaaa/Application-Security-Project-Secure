@@ -3,6 +3,7 @@ from flask_restful import Resource
 import sqlite3, os, random, string
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt_claims
 from flaskr import file_directory
+from flaskr.services.loggingservice import Logging
 
 
 def get_random_alphanumeric_string(length):
@@ -15,6 +16,7 @@ class UserVoucher(Resource):
     @jwt_required
     def get(self, username):
         current_user = get_jwt_identity()
+
         if current_user != username:
             # need to log
             response = jsonify(data="You do not have authorized access to perform this action.")
@@ -35,6 +37,7 @@ class UserVoucher(Resource):
     def post(self, username):
         claims = get_jwt_claims()
         admin = claims['admin']
+        identity = get_jwt_identity()
 
         if admin == 'y':
             conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
@@ -62,6 +65,10 @@ class UserVoucher(Resource):
 
             return jsonify(data="Voucher created with user id of {}".format(username))
         else:
+            # logging
+            log_type = "Unauthorized Access"
+            log_details = f"A user with the username {identity} tried to add a new voucher."
+            Logging(log_type, log_details)
             response = jsonify(data="You do not have authorized access to perform this action.")
             response.status_code = 401
             return response
@@ -69,12 +76,7 @@ class UserVoucher(Resource):
     @jwt_required
     def put(self, username):
         identity = get_jwt_identity()
-        if username != identity:
-            # need to log
-            response = jsonify(data="You do not have authorized access to perform this action.")
-            response.status_code = 401
-            return response
-        else:
+        if username == identity:
             import datetime
             request_json_data = request.get_json(force=True)
             code = request_json_data["code"]
@@ -102,3 +104,11 @@ class UserVoucher(Resource):
                     conn.close()
 
                     return jsonify(data=f"Voucher with the code {code} from username {username} has already been used.")
+        else:
+            # logging
+            log_type = "Unauthorized Access"
+            log_details = f"A user with the username {identity} tried to use a voucher."
+            Logging(log_type, log_details)
+            response = jsonify(data="You do not have authorized access to perform this action.")
+            response.status_code = 401
+            return response

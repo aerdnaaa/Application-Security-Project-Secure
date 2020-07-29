@@ -3,6 +3,7 @@ from flask_restful import Resource
 from flask_jwt_extended import jwt_optional, get_jwt_claims, get_jwt_identity, jwt_required
 import sqlite3, os
 from flaskr import file_directory
+from flaskr.services.loggingservice import Logging
 
 
 class Products(Resource):
@@ -37,6 +38,7 @@ class Products(Resource):
     @jwt_required
     def post(self):
         claims = get_jwt_claims()
+        identity = get_jwt_identity()
         admin = claims["admin"]
         if admin == "y":
             product_name = request.form.get('productNameInput')
@@ -91,7 +93,10 @@ class Products(Resource):
 
             return jsonify(data="Success")
         else:
-            # need to log
+            # logging
+            log_type = "Unauthorized Access"
+            log_details = f"A user with the username {identity} tried to add a new product."
+            Logging(log_type, log_details)
             response = jsonify(data="You do not have authorized access to perform this action.")
             response.status_code = 401
             return response
@@ -99,6 +104,7 @@ class Products(Resource):
     @jwt_required
     def put(self):
         claims = get_jwt_claims()
+        identity = get_jwt_identity()
         admin = claims["admin"]
         if admin == "y":
             request_json_data = request.get_json(force=True)
@@ -127,7 +133,10 @@ class Products(Resource):
 
             return jsonify(data="Success")
         else:
-            # need to log
+            # logging
+            log_type = "Unauthorized Access"
+            log_details = f"A user with the username {identity} tried to change status of product."
+            Logging(log_type, log_details)
             response = jsonify(data="You do not have authorized access to perform this action.")
             response.status_code = 401
             return response

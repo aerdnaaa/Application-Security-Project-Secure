@@ -3,6 +3,7 @@ from flask_restful import Resource
 import sqlite3, os
 from flask_jwt_extended import jwt_optional, get_jwt_claims, get_jwt_identity, jwt_required
 from flaskr import file_directory
+from flaskr.services.loggingservice import Logging
 
 
 class Vouchers(Resource):
@@ -33,6 +34,7 @@ class Vouchers(Resource):
     @jwt_required
     def post(self):
         claims = get_jwt_claims()
+        identity = get_jwt_identity()
         admin = claims["admin"]
         if admin == "y":
             voucher_title = request.form.get('voucherNameInput')
@@ -78,7 +80,10 @@ class Vouchers(Resource):
 
             return jsonify(data="Success. Voucher Created.")
         else:
-            # need to log
+            # logging
+            log_type = "Unauthorized Access"
+            log_details = f"A user with the username {identity} tried to add a new voucher."
+            Logging(log_type, log_details)
             response = jsonify(data="You do not have authorized access to perform this action.")
             response.status_code = 401
             return response
@@ -86,6 +91,7 @@ class Vouchers(Resource):
     @jwt_required
     def put(self):
         claims = get_jwt_claims()
+        identity = get_jwt_identity()
         admin = claims["admin"]
         if admin == "y":
             conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
@@ -114,6 +120,10 @@ class Vouchers(Resource):
 
             return jsonify(data="Success. Voucher Status Updated.")
         else:
+            # logging
+            log_type = "Unauthorized Access"
+            log_details = f"A user with the username {identity} tried to change status of voucher."
+            Logging(log_type, log_details)
             response = jsonify(data="Unauthorized access")
             response.status_code = 401
             return response

@@ -4,6 +4,7 @@ from flaskr.forms import ContactUs, Reviews
 import sqlite3, os
 from flaskr import file_directory
 from flask_login import current_user
+from flaskr.services.loggingservice import Logging
 
 main_blueprint = Blueprint('main', __name__)
 
@@ -34,15 +35,8 @@ def About():
         user = current_user
     except:
         user = None
-    
-    conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
-    c = conn.cursor()
 
-    c.execute("SELECT * FROM reviews WHERE productid=4")
-    product = c.fetchone()
-    conn.close()
-
-    return render_template("main/About.html", user=user, product=product)
+    return render_template("main/About.html", user=user)
 
 
 @main_blueprint.route("/FAQ")
@@ -99,7 +93,10 @@ def reviews(productid):
     
     return render_template("main/Reviews.html", user=user, product=product, reviews=reviews, form=reviewsform)
 
-
-@main_blueprint.route("/error")
-def error404():
-    return render_template("main/Error404.html")
+@main_blueprint.app_errorhandler(404)
+def handle_404(error):
+    path_info = request.url
+    details = f"Attempted to access invalid webpage via {path_info}"
+    Loggingtype = "URL Logging"
+    Logging(Loggingtype, details)
+    return render_template('main/Error404.html'), 404

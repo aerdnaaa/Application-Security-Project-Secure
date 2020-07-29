@@ -20,6 +20,9 @@ c = conn.cursor()
 # conn.close()
 # print('table created')
 
+# c.execute("Select rowid, * from products;")
+# print(c.fetchall())
+
 # Drop User Table
 # c.execute("DROP TABLE users")
 # conn.commit()

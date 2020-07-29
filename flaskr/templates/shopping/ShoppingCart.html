@@ -159,7 +159,9 @@
                                 Result Amount: {{ result_cost }}
                             </div>
                         </div>
-                        <div class="row mt-2">
+                        
+                        <div class="row mt-2 justify-content-center">
+                            {% if cart != [] %}
                             <div class="col-sm-12  col-md-6">
                                 <a href="/Home" class="btn btn-lg btn-outline-secondary btn-block btn-light">Continue
                                     Shopping</a>
@@ -167,6 +169,12 @@
                             <div class="col-sm-12 col-md-6 text-right">
                                 <a class="btn btn-lg btn-block btn-success text-uppercase" href="{{ url_for('shopping.checkout') }}">Checkout</a>
                             </div>
+                            {% else %}
+                            <div class="col-6">
+                                <a href="/Home" class="btn btn-lg btn-outline-secondary btn-block btn-light">Continue
+                                    Shopping</a>
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

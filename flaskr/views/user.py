@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response, abort
 from flaskr.forms import Register, SignIn, Forget, PaymentOptions, Reset
 from flaskr import file_directory, mail
 from flaskr.models.User import User
@@ -95,7 +95,6 @@ def signin():
         c = conn.cursor()
         #c.execute("SELECT rowid, * FROM users WHERE username=? AND password=?", (signin.username.data, pw_hash))
         c.execute("SELECT rowid, * FROM users WHERE username=?", (signin.username.data,))
-        conn.commit()
         user = c.fetchone()
 
         # Patched code: Gives ambiguous error message
@@ -174,11 +173,11 @@ def Profile():
     try:
         current_user.get_username()
     except:
-        return redirect(url_for('main.error404'))
+        abort(404)
     user = current_user
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()
-    c.execute("SELECT * FROM paymentdetails WHERE username='{}' ".format(user.get_username()))
+    c.execute("SELECT * FROM paymentdetails WHERE username=? ", (user.get_username(),))
     # self define paymentinformation and fetch one and return into payment information variable.
     paymentinformation = c.fetchone()
     if paymentinformation:
@@ -191,19 +190,18 @@ def Profile():
     if request.method == "POST" and payment_form.validate():
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
         c = conn.cursor()
-        c.execute("SELECT * FROM paymentdetails WHERE username='{}' ".format(user.get_username()))
+        c.execute("SELECT * FROM paymentdetails WHERE username=? ", (user.get_username(),))
         result = c.fetchone()
         if not result:
             e1 = pyffx.Integer(b'12376987ca98sbdacsbjkdwd898216jasdnsd98213912', length=16)
-            e2 = pyffx.Integer(b'12376987ca98sbdacsbjkdwd898216jasdnsd98213912',
-                               length=len(str(payment_form.SecretNumber.data)))
+            e2 = pyffx.Integer(b'12376987ca98sbdacsbjkdwd898216jasdnsd98213912', length=len(str(payment_form.SecretNumber.data)))
             encrypted_card_no = e1.encrypt(payment_form.CreditCardno.data)
             encrypted_card_CVV = e2.encrypt(payment_form.SecretNumber.data)
-            c.execute("INSERT INTO paymentdetails VALUES ('{}','{}','{}','{}','{}')".format(user.get_username(),
-                                                                                            payment_form.Name.data,
-                                                                                            encrypted_card_no,
-                                                                                            payment_form.ExpiryDate.data,
-                                                                                            encrypted_card_CVV))
+            c.execute("INSERT INTO paymentdetails VALUES (?, ?, ?, ?, ?)", (user.get_username(),
+                                                                                                 payment_form.Name.data,
+                                                                                                 encrypted_card_no,
+                                                                                                 payment_form.ExpiryDate.data,
+                                                                                                 encrypted_card_CVV))
             conn.commit()
             conn.close()
             return redirect(url_for('user.Profile'))

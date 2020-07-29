@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template,redirect, url_for
+from flask import Blueprint, render_template, redirect, url_for, abort
 import sqlite3, os, requests
 from flaskr import file_directory
 
@@ -15,9 +15,9 @@ def admin():
         if current_user.get_admin()=='y':
             isAdmin = True
         else:
-            return redirect(url_for('main.error404'))
+            abort(404)
     except:
-        return redirect(url_for('main.error404'))
+        abort(404)
 
     if isAdmin:
         return render_template("admin/Admin.html", title="Dashboard")
@@ -30,9 +30,9 @@ def add_product():
         if current_user.get_admin()=='y':
             isAdmin = True
         else:
-            return redirect(url_for('main.error404'))
+            abort(404)
     except:
-        return redirect(url_for('main.error404'))
+        abort(404)
 
     if isAdmin:
         category_list = ['barbell', 'bench', 'racks', 'plates']
@@ -46,9 +46,9 @@ def show_product():
         if current_user.get_admin()=='y':
             isAdmin = True
         else:
-            return redirect(url_for('main.error404'))
+            abort(404)
     except:
-        return redirect(url_for('main.error404'))
+        abort(404)
 
     if isAdmin:
         return render_template("admin/Products/Show_Product.html", title="Products")
@@ -61,9 +61,9 @@ def show_voucher():
         if current_user.get_admin()=='y':
             isAdmin = True
         else:
-            return redirect(url_for('main.error404'))
+            abort(404)
     except:
-        return redirect(url_for('main.error404'))
+        abort(404)
 
     if isAdmin:
         return render_template("admin/Vouchers/Show_Voucher.html", title="Vouchers")
@@ -76,9 +76,9 @@ def add_voucher():
         if current_user.get_admin()=='y':
             isAdmin = True
         else:
-            return redirect(url_for('main.error404'))
+            abort(404)
     except:
-        return redirect(url_for('main.error404'))
+        abort(404)
 
     if isAdmin:
         return render_template("admin/Vouchers/Add_Voucher.html", title="Add Voucher")
@@ -91,9 +91,9 @@ def add_user_voucher():
         if current_user.get_admin()=='y':
             isAdmin = True
         else:
-            return redirect(url_for('main.error404'))
+            abort(404)
     except:
-        return redirect(url_for('main.error404'))
+        abort(404)
 
     if isAdmin:
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
@@ -111,9 +111,9 @@ def manage_user():
         if current_user.get_admin()=='y':
             isAdmin = True
         else:
-            return redirect(url_for('main.error404'))
+            abort(404)
     except:
-        return redirect(url_for('main.error404'))
+        abort(404)
 
     if isAdmin:
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
@@ -132,9 +132,9 @@ def Queries():
         if current_user.get_admin()=='y':
             isAdmin = True
         else:
-            return redirect(url_for('main.error404'))
+            abort(404)
     except:
-        return redirect(url_for('main.error404'))
+        abort(404)
 
     if isAdmin:
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
@@ -153,9 +153,9 @@ def technical_logs():
         if current_user.get_admin()=='y':
             isAdmin = True
         else:
-            return redirect(url_for('main.error404'))
+            abort(404)
     except:
-        return redirect(url_for('main.error404'))
+        abort(404)
 
     if isAdmin:
         token = "e96e83862dab40a0ad31c8c9caa963b8741acd8ee1304f1b9d2e37776d78c27f"
@@ -173,9 +173,9 @@ def activities_logs():
         if current_user.get_admin()=='y':
             isAdmin = True
         else:
-            return redirect(url_for('main.error404'))
+            abort(404)
     except:
-        return redirect(url_for('main.error404'))
+        abort(404)
     if isAdmin:
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
         c = conn.cursor()

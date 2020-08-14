@@ -141,6 +141,7 @@
                         <div class="row mt-2">
                             <div class="col-8 mx-auto">
                                 <div class="form-group row">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                     <label for="voucher" class="col-sm-3 col-form-label">Voucher</label>
                                     <div class="col-sm-6">
                                         <select class="form-control" id="voucher">

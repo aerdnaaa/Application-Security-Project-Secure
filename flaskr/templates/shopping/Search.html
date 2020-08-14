@@ -37,6 +37,7 @@
     <h2>Search</h2>
     
     <form action="" method='POST'>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       <div class="input-group w-100">
         {{ render_field(form.Search, class="form-control", placeholder="Search...") }}
         <div class="input-group-append">

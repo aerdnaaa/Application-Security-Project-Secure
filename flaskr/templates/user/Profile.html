@@ -85,6 +85,7 @@
 
     <div id="basic-information" class="show-div">
         <form id="details-form" method="post">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" class="form-control" id="username" value="{{ user.get_username() }}"
@@ -115,6 +116,7 @@
                 <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                     <div class="card-body">
                         <form id="paymentdetails-form" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                             <div class="form-group">
                                 <label for="fullname">FullName</label>
                                 <input type="text" class="form-control" id="fullname"
@@ -144,6 +146,7 @@
                 <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                     <div class="card-body">
                         <form id="paymentdetails-form" method="post">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                             <div class="form-group">
                                 <label for="fullname">FullName</label>
                                 <input type="text" class="form-control" id="fullname"
@@ -223,6 +226,7 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <form method="POST" action="">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Card Details</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">

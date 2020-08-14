@@ -2,12 +2,14 @@ from flask import Flask
 from flask_restful import Api
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response, abort
 from flask_mail import Mail
 import os, sqlite3
 import logging
 import sentry_sdk
 from flask_login import LoginManager
 from flaskr.models.User import User
+from flask_wtf.csrf import CsrfProtect,CSRFError
 
 # sentry sdk for logging
 from sentry_sdk.integrations.logging import LoggingIntegration
@@ -26,6 +28,7 @@ sentry_sdk.init(
 app = Flask(__name__)
 api_app = Api(app)
 jwt = JWTManager(app)
+csrf = CsrfProtect(app)
 app.config.update(
     MAIL_SERVER='smtp.gmail.com',
     MAIL_PORT=465,
@@ -36,6 +39,7 @@ app.config.update(
 mail = Mail(app)
 CORS(app)
 login_manager = LoginManager(app)
+
 app.config['RECAPTCHA_PUBLIC_KEY'] = '6LfmcrMZAAAAAJcTRMYVFIii7-reRZ4a_o5V1m37'
 app.config['RECAPTCHA_PRIVATE_KEY'] = '6LfmcrMZAAAAAL_V-ZYV0CDySlbKLzhgi5DqYd8Q'
 app.config.from_object('config')
@@ -93,3 +97,7 @@ def add_claims_to_access_token(identity):
     c.execute("SELECT admin FROM users WHERE username=?", (identity,))
     admin = c.fetchone()[0]
     return {"admin": admin}
+
+@app.errorhandler(CSRFError)
+def handle_csrf_error(e):
+    return render_template('main/Error404.html',reason=e.description),400

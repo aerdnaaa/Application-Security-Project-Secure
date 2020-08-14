@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Password Recovery{% endblock %}
+{% block title %}OTP{% endblock %}
 {% block content %}
 {% from "includes/_formhelper.html" import render_field %}
 <style>
@@ -33,7 +33,7 @@
 </style>
 <div class="container">
     <br>
-    {% if expired != True %}
+    {% if expired == False %}
     <h2 id="formHeader" class="animated bounceIn">Enter OTP</h2>
     <div class="row justify-content-center">
         <div class="col-6" id="formContent">
@@ -60,7 +60,9 @@
         </div> <!-- col -->
     </div> <!-- row -->
     {% else %}
-    <h2 id="formHeader" class="animated bounceIn">Your OTP has expired</h2>
+    <div class="row justify-content-center">
+        <h4 style="margin-top: 20%;">Your OTP has expired. <a href="/Signin" style="text-decoration: none;">Click here</a> to try again.</h4>
+      </div>
     {% endif %}
 </div> <!-- container -->
 {% endblock %}

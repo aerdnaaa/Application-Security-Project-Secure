@@ -60,6 +60,9 @@
     <div class="form-group">
         {{ render_field(form.password, class="form-control") }}
     </div>
+    <div class="form-group">
+        {{ render_field(form.recaptcha, class="form-control") }}
+    </div>
     {% with messages = get_flashed_messages(category_filter=["password"]) %}
     {% if messages %}
     {% for message in messages %}

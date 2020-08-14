@@ -138,12 +138,13 @@ def signInOTP(token):
         token = s.loads(token)
         username = token[0]
         otp = token[1]
+        expired = False
     except:
         expired = True
 
     form = OTP(request.form)
 
-    if request.method=="POST":
+    if request.method=="POST" and not expired:
         if form.OTP.data == otp:
             conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
             c = conn.cursor()
@@ -303,13 +304,13 @@ def reset(token):
     except:
         user = None
 
+    # Check if token is valid
+    s = Serializer('secret_key', 300)
     try:
-        # Check if token is valid
-        s = Serializer('secret_key', 300)
         username = s.loads(token)
-        valid = True
+        expired = False
     except:
-        valid = False
+        expired = True
 
     form = Reset(request.form)
     if request.method == "POST" and form.validate():
@@ -349,4 +350,4 @@ def reset(token):
            
             flash(errorMsg, 'password')
 
-    return render_template("user/Reset.html", user=user, form=form, valid=valid)
+    return render_template("user/Reset.html", user=user, form=form, expired=expired)

@@ -7,11 +7,11 @@ class Register(Form):
     username = StringField("Username", [validators.InputRequired(), validators.Length(min=1, max=150)])
     email = EmailField("Email", [validators.InputRequired(), validators.Email()])
     password = PasswordField("Password", [validators.InputRequired()])
+    recaptcha = RecaptchaField()
 
 class SignIn(Form):
     username = StringField("Username", [validators.InputRequired()])
     password = PasswordField("Password", [validators.InputRequired()])
-    # recaptcha = RecaptchaField()
 
 class OTP(Form):
     OTP = StringField("", [validators.InputRequired()])

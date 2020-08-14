@@ -33,6 +33,7 @@
 </style>
 <div class="container">
     <br>
+    {% if expired != True %}
     <h2 id="formHeader" class="animated bounceIn">Enter OTP</h2>
     <div class="row justify-content-center">
         <div class="col-6" id="formContent">
@@ -58,5 +59,8 @@
             <br>
         </div> <!-- col -->
     </div> <!-- row -->
+    {% else %}
+    <h2 id="formHeader" class="animated bounceIn">Your OTP has expired</h2>
+    {% endif %}
 </div> <!-- container -->
 {% endblock %}

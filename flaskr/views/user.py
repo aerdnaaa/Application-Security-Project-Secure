@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response, abort
-from flaskr.forms import Register, SignIn, Forget, PaymentOptions, Reset
+from flaskr.forms import Register, SignIn, Forget, PaymentOptions, Reset, OTP
 from flaskr import file_directory, mail
 from flaskr.models.User import User
 from flaskr.models.PaymentInfo import PaymentInfo
@@ -8,15 +8,13 @@ from flask_mail import Message
 import sqlite3, os
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flaskr.services.loggingservice import Logging
-
 # HASH
 import hashlib
-
 # PASSWORD STRENGTH CHECKER
 from password_strength import PasswordPolicy
-
 # FLASK LOGIN
 from flask_login import current_user, login_user, logout_user
+import math, random
 
 user_blueprint = Blueprint('user', __name__)
 
@@ -98,6 +96,26 @@ def signin():
             flash("Incorrect username or password")
         else:
             if user[3] == pw_hash:
+                #====================== TEST =======================#
+                # Generate OTP  
+                digits = "0123456789"
+                OTP = ""    
+                for i in range(8) : 
+                    OTP += digits[math.floor(random.random() * 10)] 
+            
+                s = Serializer('secret_key', 120)
+                # Store username and OTP in token for authentication
+                token = s.dumps([user[1], OTP]).decode('UTF-8')
+                print(token)
+                # Send Email to user
+                mail.send_message(
+                    'Indirect Home Gym Sign In',
+                    sender='ballsnpaddles@gmail.com',
+                    recipients=[user[2]],
+                    body="Hi {},\n\nYour 8 digit OTP is {}. It will expire in 2 minutes.\n\n If you did not request for this OTP, please reset your password as soon as possible.\n\nCheers!\nIndirect Home Gym Team".format(user[1], OTP)
+                )
+                return redirect(url_for('user.signInOTP', token=token))
+                #=============================================================#
                 userObj = User(user[0], user[1], user[2], user[3], user[4])
                 if userObj.get_admin() == 'y':
                     login_user(userObj)
@@ -115,6 +133,41 @@ def signin():
         conn.close()
     return render_template("user/SignIn.html", form=signin, user=user)
 
+@user_blueprint.route('/OTP/<token>', methods=["GET", "POST"])
+def signInOTP(token):
+    try:
+        current_user.get_username()
+        return redirect(url_for('main.home'))
+    except:
+        user = None
+
+    s = Serializer('secret_key', 120)
+    try:
+        token = s.loads(token)
+        username = token[0]
+        OTP = token[1]
+    except:
+        print("expired")
+
+    form = OTP(request.form)
+
+    if request.method=="POST":
+        if form.OTP.data == OTP:
+            conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
+            c = conn.cursor()
+            c.execute("SELECT rowid, * FROM users WHERE username=?", (username,))
+            user = c.fetchone()
+            userObj = User(user[0], user[1], user[2], user[3], user[4])
+            if userObj.get_admin() == 'y':
+                login_user(userObj)
+                return redirect(url_for('admin.admin'))
+            else:
+                login_user(userObj)
+                return redirect(url_for('main.home'))
+        else:
+            flash("Invalid OTP")
+
+    return render_template("user/OTP.html", user=user, form=form)
 
 # FLASK LOGIN
 @user_blueprint.route('/logout')

@@ -13,7 +13,7 @@ from flaskr.services.loggingservice import Logging
 import hashlib
 
 # PASSWORD STRENGTH CHECKER
-from password_strength import PasswordPolicy, PasswordStats
+from password_strength import PasswordPolicy
 
 # FLASK LOGIN
 from flask_login import current_user, login_user, logout_user
@@ -46,9 +46,9 @@ def register():
 
             # Checks password against policy and stores violations in list
             check = policy.test(register.password.data)
-            strengthLvl = PasswordStats(register.password.data).strength()
+
             # If password has 0 errors and meets complexity requirement, password hashed and stored in database
-            if check == [] and strengthLvl > 0.5:
+            if check == []:
                 pw_hash = hashlib.sha512(register.password.data.encode()).hexdigest()
                 c.execute("INSERT INTO users VALUES (?, ?, ?, ?)",
                           (register.username.data, register.email.data, pw_hash, 'n'))
@@ -67,9 +67,6 @@ def register():
                         errorMsg.append("Password must include numbers")
                     elif type(i).__name__ == 'Special':
                         errorMsg.append("Password must include special characters (eg. !, @, #, $, %)")
-                # Strength level checks complexity of password
-                if strengthLvl < 0.5:
-                    errorMsg.append("Password too simple. Avoid simple combinations and dictionary words")
                 flash(errorMsg, 'password')
         else:
             # Flash error message if user exists
@@ -284,9 +281,9 @@ def reset(token):
 
         # Checks password against policy and stores violations in list
         check = policy.test(form.password.data)
-        strengthLvl = PasswordStats(form.password.data).strength()
+        
         # If password has 0 errors and meets complexity requirement, password hashed and stored in database
-        if check == [] and strengthLvl > 0.5:
+        if check == []:
             pw_hash = hashlib.sha512(form.password.data.encode()).hexdigest()
             c.execute("UPDATE users SET password=? WHERE username=?", (pw_hash, username))
             conn.commit()
@@ -304,9 +301,7 @@ def reset(token):
                     errorMsg.append("Password must include numbers")
                 elif type(i).__name__ == 'Special':
                     errorMsg.append("Password must include special characters (eg. !, @, #, $, %)")
-            # Strength level checks complexity of password
-            if strengthLvl < 0.5:
-                errorMsg.append("Password too simple. Avoid simple combinations and dictionary words")
+           
             flash(errorMsg, 'password')
 
     return render_template("user/Reset.html", user=user, form=form, valid=valid)

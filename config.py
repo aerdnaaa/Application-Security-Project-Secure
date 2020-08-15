@@ -3,6 +3,7 @@ import os, datetime
 DEBUG = True
 SECRET_KEY = 'WeakSecret'
 SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE='lax'
 JWT_SECRET_KEY = 'super-secret'
 # MAIL_SERVER ='smtp.mailtrap.io'
 # MAIL_PORT = 2525

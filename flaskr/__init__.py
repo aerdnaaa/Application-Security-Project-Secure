@@ -9,7 +9,7 @@ import logging
 import sentry_sdk
 from flask_login import LoginManager
 from flaskr.models.User import User
-from flask_wtf.csrf import CsrfProtect,CSRFError
+from flask_wtf.csrf import CSRFProtect,CSRFError
 
 # sentry sdk for logging
 from sentry_sdk.integrations.logging import LoggingIntegration
@@ -28,7 +28,7 @@ sentry_sdk.init(
 app = Flask(__name__)
 api_app = Api(app)
 jwt = JWTManager(app)
-csrf = CsrfProtect(app)
+csrf = CSRFProtect(app)
 app.config.update(
     MAIL_SERVER='smtp.gmail.com',
     MAIL_PORT=465,

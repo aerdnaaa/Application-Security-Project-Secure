@@ -36,7 +36,7 @@
     {% if expired == False %}
     <h2 id="formHeader" class="animated bounceIn">Reset Password</h2>
     <div class="row justify-content-center">
-        <div class="col-7" id="formContent">
+        <div class="col-8" id="formContent">
             {% with messages = get_flashed_messages(category_filter=["password"]) %}
             {% if messages %}
             {% for message in messages %}
@@ -69,10 +69,24 @@
             {% endfor %}
             {% endif %}
             {% endwith %}
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-4" style="margin-top: 3%;">
+            <ul class="list-group">            
+                <li class="list-group-item list-group-item-danger" id="length">Password must contain a minimum of 12 characters</li>
+                <li class="list-group-item list-group-item-danger" id="big">Password must have at least 1 uppercase character</li>
+                <li class="list-group-item list-group-item-danger" id="numbers">Password must have at least 1 number</li>
+                <li class="list-group-item list-group-item-danger" id="special">Password must have at least 1 special character</li>
+              </ul>
+        </div>
+        
+        <div class="col-4" id="formContent">
             <form method="POST" action="">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="form-group">
-                    {{ render_field(form.password, class="form-control") }}
+                    {{ render_field(form.password, class="form-control", id="password", onkeyup="checkStrength();") }}
                 </div>
                 <input id="submitButton" style="text-align: center;" type="submit" value="Submit" class="btn btn-primary"/>
             </form>
@@ -85,4 +99,58 @@
     </div>
     {% endif %}
 </div> <!-- container -->
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function checkStrength() {
+      var big = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+      var special = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "-", "_", "+", "=", "[", "]", "{", "}", "|", ";", ":", "<", ">", ",", ".", "?", "/"];
+      var numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+
+      var password = document.getElementById("password").value;
+      var check = [];
+
+      if (password.length >= 12) {
+        check.push("length");
+      }
+
+      for (let i = 0; i < password.length; i++) {
+
+        if (big.includes(password[i])) {
+            check.push("big");
+        } else if (special.includes(password[i])) {
+            check.push("special");
+        } else if (numbers.includes(password[i])) {
+            check.push("number");
+        }
+
+      }
+
+      if (check.includes("big")) {
+        document.getElementById('big').setAttribute("class", "list-group-item list-group-item-success");
+      } else {
+        document.getElementById('big').setAttribute("class", "list-group-item list-group-item-danger");
+      }
+
+      if (check.includes("length")) {
+        document.getElementById('length').setAttribute("class", "list-group-item list-group-item-success");
+      } else {
+        document.getElementById('length').setAttribute("class", "list-group-item list-group-item-danger");
+      }
+
+      if (check.includes("special")) {
+        document.getElementById('special').setAttribute("class", "list-group-item list-group-item-success");
+      } else {
+        document.getElementById('special').setAttribute("class", "list-group-item list-group-item-danger");
+      }
+
+      if (check.includes("number")) {
+        document.getElementById('numbers').setAttribute("class", "list-group-item list-group-item-success");
+      } else {
+        document.getElementById('numbers').setAttribute("class", "list-group-item list-group-item-danger");
+      }
+
+    }
+</script>
 {% endblock %}

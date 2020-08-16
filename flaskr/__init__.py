@@ -98,6 +98,3 @@ def add_claims_to_access_token(identity):
     admin = c.fetchone()[0]
     return {"admin": admin}
 
-@app.errorhandler(CSRFError)
-def handle_csrf_error(e):
-    return render_template('main/Error404.html',reason=e.description),400

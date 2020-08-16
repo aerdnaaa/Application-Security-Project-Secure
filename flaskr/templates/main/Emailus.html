@@ -17,7 +17,7 @@
         <!--Grid column-->
         <div class="col-md-9 mb-md-0 mb-5">
             <form id="contact-form" action="" method="POST">
-            
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
 
                 <!--Grid row-->
                 <div class="row">

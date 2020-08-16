@@ -73,13 +73,13 @@ c = conn.cursor()
 #     print('vouchers table created')
 
 #     # Create query table
-#     c.execute("""CREATE TABLE IF NOT EXISTS query (
-#         name text,
-#         email text,
-#         subject text,
-#         message text
-#         )""")
-#     print('query table created')
+# c.execute("""CREATE TABLE IF NOT EXISTS query (
+#     name text,
+#     email text,
+#     subject text,
+#     message text
+#     )""")
+# print('query table created')
 
 # def add_sample_data():
 
@@ -153,6 +153,12 @@ c = conn.cursor()
 
 # Drop Voucher Table
 # c.execute("DROP TABLE reviews")
+# conn.commit()
+# conn.close()
+# print('table dropped')
+
+#Drop query(emailus) Table
+# c.execute("DROP TABLE query")
 # conn.commit()
 # conn.close()
 # print('table dropped')

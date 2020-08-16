@@ -45,9 +45,20 @@ def ShoppingCart():
 
 @shopping_blueprint.route("/apply_voucher/<voucher_code>")
 def apply_voucher(voucher_code):
-    if '_user_id' in session and voucher_code != ":":
-        session['voucher'] = voucher_code
-    elif 'voucher' in session:
+    if voucher_code != ":":
+        # check if voucher is general voucher
+        conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
+        c = conn.cursor()
+        c.execute("SELECT user_id from vouchers where code = ?", (voucher_code,))
+        user_id = c.fetchone()[0]
+        if user_id == 0:
+            # voucher used is general
+            session['voucher'] = voucher_code
+        elif user_id == session["_user_id"]:
+            # voucher belongs to user with the current session
+            session['voucher'] = voucher_code
+    # delete voucher if voucher selected is empty
+    elif 'voucher' in session and voucher_code == ":":
         del session['voucher']
 
     return redirect(url_for('shopping.ShoppingCart'))
@@ -97,7 +108,7 @@ def addToCart(product_id):
 
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()
-    c.execute(" SELECT * FROM products WHERE product_id=? ", product_id)
+    c.execute(" SELECT * FROM products WHERE product_id=? ", (product_id,))
     item = c.fetchone()
     # Check if product is inactive
     # If product not active, display error 404 page

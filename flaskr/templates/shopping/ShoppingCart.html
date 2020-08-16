@@ -186,7 +186,7 @@
         {% if user != None %}
             load_data('{{user.id}}', '{{ voucher_code }}')
         {% else %}
-            load_data('', '')
+            load_data('', '{{ voucher_code }}')
         {% endif %}
 
 

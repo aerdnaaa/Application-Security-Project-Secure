@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, abort
+from flask import Blueprint, render_template, abort, request
 import sqlite3, os, requests
 from flaskr import file_directory
 
@@ -20,7 +20,7 @@ def admin():
         abort(404)
 
     if isAdmin:
-        return render_template("admin/Admin.html", title="Dashboard")
+        return render_template("admin/Admin.html", title="Dashboard", cookie=request.headers['cookie'])
 
 
 @admin_blueprint.route("/Admin/add_product")
@@ -36,7 +36,7 @@ def add_product():
 
     if isAdmin:
         category_list = ['barbell', 'bench', 'racks', 'plates']
-        return render_template("admin/Products/Add_Product.html", title="Add Product", category_list=category_list)
+        return render_template("admin/Products/Add_Product.html", title="Add Product", category_list=category_list, cookie=request.headers['cookie'])
 
 
 @admin_blueprint.route("/Admin/show_product")
@@ -99,7 +99,7 @@ def add_user_voucher():
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
         c = conn.cursor()
 
-        c.execute("SELECT username FROM users WHERE admin <> 'y'")
+        c.execute("SELECT username, user_id FROM users WHERE admin <> 'y' and user_id <> 0")
         users = c.fetchall()
         return render_template("admin/Vouchers/Add_User_Voucher.html", title="Add User Voucher", users=users)
 

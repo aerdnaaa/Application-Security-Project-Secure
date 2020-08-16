@@ -40,12 +40,12 @@
                         <div class="form-group">
                             <label for="productSellingPriceInput">Selling Price of product</label>
                             <input type="number" class="form-control" name="productSellingPriceInput" id="productSellingPriceInput"
-                                   placeholder="Enter Price" min="0" step="0.01">
+                                   placeholder="Enter Price" min="0.01" step="0.01">
                         </div>
                         <div class="form-group">
                             <label for="productCostPriceInput">Cost Price of product</label>
                             <input type="number" class="form-control" name="productCostPriceInput" id="productCostPriceInput"
-                                   placeholder="Enter Price" min="0" step="0.01">
+                                   placeholder="Enter Price" min="0.01" step="0.01">
                         </div>
                         <div class="form-group">
                             <label for="productCategory">Category of product</label>
@@ -54,6 +54,10 @@
                                     <option>{{ category }}</option>
                                 {% endfor %}
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="productStock">Stock of product</label>
+                            <input type="number" class="form-control" name="productStock" id="productStock" placeholder="Enter Stock" min="1">
                         </div>
                         <button type="submit" class="btn btn-outline-primary mx-auto">Submit
                         </button>
@@ -66,35 +70,6 @@
 
     {#    if we need validation for fields use this: https://getbootstrap.com/docs/4.0/components/forms/#validation #}
 
-    <script>
-        {#function send_data() {#}
-        {##}
-        {#    let url = "http://localhost:5000/api/products";#}
-        {#    let productName = document.getElementById("productNameInput").value;#}
-        {#    let productSellingPrice = document.getElementById("productSellingPriceInput").value;#}
-        {#    let productCostPrice = document.getElementById("productCostPriceInput").value;#}
-        {##}
-        {#    let data = {#}
-        {#        product_name: productName,#}
-        {#        product_selling_price: productSellingPrice,#}
-        {#        product_cost_price: productCostPrice#}
-        {#    };#}
-        {##}
-        {#    fetch(url, {#}
-        {#        method: 'POST',#}
-        {#        headers: {#}
-        {#            'Content-Type': 'application/json',#}
-        {#        },#}
-        {#        body: JSON.stringify(data)#}
-        {#    })#}
-        {##}
-        {#    document.getElementById("productNameInput").value = "";#}
-        {#    document.getElementById("productSellingPriceInput").value = "";#}
-        {#    document.getElementById("productCostPriceInput").value = "";#}
-        {##}
-
-
-    </script>
 
 {% endblock %}
 

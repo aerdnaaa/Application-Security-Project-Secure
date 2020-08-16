@@ -1,24 +1,37 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response, abort
-from flaskr.forms import Register, SignIn, Forget, PaymentOptions, Reset
-from flaskr import file_directory, mail
-from flaskr.models.User import User
-from flaskr.models.PaymentInfo import PaymentInfo
-import pyffx
-from flask_mail import Message
-import sqlite3, os
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from flaskr.services.loggingservice import Logging
-
 # HASH
 import hashlib
+import os
+import sqlite3
 
+import pyffx
+from flask import Blueprint, render_template, request, redirect, url_for, flash, abort
+# FLASK LOGIN
+from flask_login import current_user, login_user, logout_user
+from flaskr import file_directory, mail
+from flaskr.forms import Register, SignIn, Forget, PaymentOptions, Reset
+from flaskr.models.PaymentInfo import PaymentInfo
+from flaskr.models.User import User
+from flaskr.services.loggingservice import Logging
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 # PASSWORD STRENGTH CHECKER
 from password_strength import PasswordPolicy, PasswordStats
 
-# FLASK LOGIN
-from flask_login import current_user, login_user, logout_user
-
 user_blueprint = Blueprint('user', __name__)
+
+
+def generate_user_id():
+    conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
+    c = conn.cursor()
+    import random
+    user_id = random.randint(0,10000)
+    while True:
+        c.execute("SELECT * FROM users where user_id=?", user_id)
+        if c.fetchone:
+            user_id = random.randint(0, 10000)
+        else:
+            break
+
+    return user_id
 
 
 # ============================================= Sign in/ Register ===============================================#
@@ -50,8 +63,9 @@ def register():
             # If password has 0 errors and meets complexity requirement, password hashed and stored in database
             if check == [] and strengthLvl > 0.5:
                 pw_hash = hashlib.sha512(register.password.data.encode()).hexdigest()
-                c.execute("INSERT INTO users VALUES (?, ?, ?, ?)",
-                          (register.username.data, register.email.data, pw_hash, 'n'))
+                unique_user_id = generate_user_id()
+                c.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?)",
+                          (unique_user_id, register.username.data, register.email.data, pw_hash, 'n'))
                 conn.commit()
                 conn.close()
                 return redirect(url_for('user.signin'))
@@ -93,11 +107,11 @@ def signin():
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
         c = conn.cursor()
         # c.execute("SELECT rowid, * FROM users WHERE username=? AND password=?", (signin.username.data, pw_hash))
-        c.execute("SELECT rowid, * FROM users WHERE username=?", (signin.username.data,))
+        c.execute("SELECT * FROM users WHERE username=?", (signin.username.data,))
         user = c.fetchone()
 
         # Patched code: Gives ambiguous error message
-        if user == None:
+        if user is None:
             flash("Incorrect username or password")
         else:
             if user[3] == pw_hash:
@@ -176,7 +190,7 @@ def Profile():
     user = current_user
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()
-    c.execute("SELECT * FROM paymentdetails WHERE username=? ", (user.get_username(),))
+    c.execute("SELECT * FROM paymentdetails WHERE user_id=? ", (user.id,))
     # self define paymentinformation and fetch one and return into payment information variable.
     paymentinformation = c.fetchone()
     if paymentinformation:
@@ -189,7 +203,7 @@ def Profile():
     if request.method == "POST" and payment_form.validate():
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
         c = conn.cursor()
-        c.execute("SELECT * FROM paymentdetails WHERE username=? ", (user.get_username(),))
+        c.execute("SELECT * FROM paymentdetails WHERE user_id=? ", (user.id,))
         result = c.fetchone()
         if not result:
             e1 = pyffx.Integer(b'12376987ca98sbdacsbjkdwd898216jasdnsd98213912', length=16)
@@ -230,7 +244,7 @@ def forget():
         c = conn.cursor()
         c.execute("SELECT username, email FROM users WHERE email=?", (form.email.data,))
         userInfo = c.fetchone()
-        if userInfo != None:
+        if userInfo is not None:
             # Generate Token
             s = Serializer('secret_key', 300)
 

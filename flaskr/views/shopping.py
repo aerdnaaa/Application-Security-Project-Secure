@@ -1,10 +1,11 @@
-from flask import Blueprint, render_template, session, request, redirect, url_for, jsonify, abort
-from flaskr.models.User import User
-from flaskr.forms import SearchForm, Reviews
-import sqlite3, os, requests
+import os
+import requests
+import sqlite3
+
+from flask import Blueprint, render_template, session, request, redirect, url_for, abort
+from flask_login import current_user
 from flaskr import file_directory
-from flask_login import current_user, login_required
-import string
+from flaskr.forms import SearchForm
 
 shopping_blueprint = Blueprint('shopping', __name__)
 
@@ -22,7 +23,7 @@ def ShoppingCart():
     if 'cart' in session:
         cart = session['cart']
         for item in cart:
-            original_cost += item[3]
+            original_cost += item[4]
     else:
         cart = []
 
@@ -44,7 +45,7 @@ def ShoppingCart():
 
 @shopping_blueprint.route("/apply_voucher/<voucher_code>")
 def apply_voucher(voucher_code):
-    if 'username' in session and voucher_code != ":":
+    if '_user_id' in session and voucher_code != ":":
         session['voucher'] = voucher_code
     elif 'voucher' in session:
         del session['voucher']
@@ -63,14 +64,18 @@ def checkout():
     # Check if cart is in session or empty
     if 'cart' in session:
         cart = session['cart']
-        if cart == []:
+        if not cart:
             return redirect(url_for('main.home'))
     else:
         return redirect(url_for('main.home'))
 
-    if 'username' in session and 'voucher' in session:
-        url = "http://localhost:5000/api/userVoucher/" + session["username"]
-        response = requests.put(url, json={"code": session["voucher"]})
+    # uses the voucher
+    if '_user_id' in session and 'voucher' in session:
+        cookie = request.headers['cookie']
+        headers = {'cookie': cookie}
+        url = "http://localhost:5000/api/userVoucher/" + session["_user_id"]
+        response = requests.put(url, json={"code": session["voucher"]}, headers=headers)
+
         data = response.json()["data"]
         if data == "This is a general voucher":
             data = ""
@@ -83,8 +88,8 @@ def checkout():
     return render_template("shopping/Checkout.html", data=data, user=user)
 
 
-@shopping_blueprint.route("/Add/<productID>")
-def addToCart(productID):
+@shopping_blueprint.route("/Add/<product_id>")
+def addToCart(product_id):
     if 'cart' in session:
         cart = session['cart']
     else:
@@ -92,11 +97,11 @@ def addToCart(productID):
 
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()
-    c.execute(" SELECT * FROM products WHERE rowid=? ", (productID))
+    c.execute(" SELECT * FROM products WHERE product_id=? ", product_id)
     item = c.fetchone()
     # Check if product is inactive
     # If product not active, display error 404 page
-    if item == None or item[6] == "inactive":
+    if item is None or item[6] == "inactive":
         abort(404)
     else:
         cart.append(item)
@@ -116,7 +121,7 @@ def Products():
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()
 
-    c.execute("SELECT rowid, * FROM products")
+    c.execute("SELECT * FROM products")
     products = c.fetchall()
     conn.close()
 

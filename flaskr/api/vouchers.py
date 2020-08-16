@@ -1,41 +1,42 @@
 from flask import request, jsonify, redirect, url_for
 from flask_restful import Resource
 import sqlite3, os
-from flask_jwt_extended import jwt_optional, get_jwt_claims, get_jwt_identity, jwt_required
+from flask_login import current_user
 from flaskr import file_directory
 from flaskr.services.loggingservice import Logging
 
 
 class Vouchers(Resource):
-    @jwt_optional
     def get(self):
-        identity = get_jwt_identity()
-        if identity:
-            claims = get_jwt_claims()
-            admin = claims['admin']
-        else:
-            admin = 'n'
+        try:
+            is_admin = current_user.get_admin()
+        except:
+            is_admin = 'n'
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
         c.execute("SELECT * FROM vouchers where user_id=0")
         conn.commit()
-        if admin == "y":
+        if is_admin == 'y':
             vouchers = [dict(row) for row in c.fetchall()]
         else:
             vouchers = []
             for row in c.fetchall():
                 if row[5] == "active":
                     vouchers.append(dict(row))
-        conn.close()
+            conn.close()
 
         return jsonify(data=vouchers)
 
-    @jwt_required
     def post(self):
-        claims = get_jwt_claims()
-        identity = get_jwt_identity()
-        admin = claims["admin"]
+        try:
+            identity = current_user.get_username()
+            admin = current_user.get_admin()
+            has_account = True
+        except:
+            identity = None
+            admin = 'n'
+            has_account = False
         if admin == "y":
             voucher_title = request.form.get('voucherNameInput')
             voucher_code = request.form.get('voucherCode')
@@ -82,17 +83,24 @@ class Vouchers(Resource):
         else:
             # logging
             log_type = "Unauthorized Access"
-            log_details = f"A user with the username {identity} tried to add a new voucher."
+            if has_account:
+                log_details = f"A user with the username {identity} tried to add a new voucher."
+            else:
+                log_details = f"Am unknown user tried to add a new voucher."
             Logging(log_type, log_details)
             response = jsonify(data="You do not have authorized access to perform this action.")
             response.status_code = 401
             return response
 
-    @jwt_required
     def put(self):
-        claims = get_jwt_claims()
-        identity = get_jwt_identity()
-        admin = claims["admin"]
+        try:
+            identity = current_user.get_username()
+            admin = current_user.get_admin()
+            has_account = True
+        except:
+            identity = None
+            admin = 'n'
+            has_account = False
         if admin == "y":
             conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
             c = conn.cursor()
@@ -122,7 +130,10 @@ class Vouchers(Resource):
         else:
             # logging
             log_type = "Unauthorized Access"
-            log_details = f"A user with the username {identity} tried to change status of voucher."
+            if has_account:
+                log_details = f"A user with the username {identity} tried to change status of voucher."
+            else:
+                log_details = "An unknown user tried to change status of a voucher."
             Logging(log_type, log_details)
             response = jsonify(data="Unauthorized access")
             response.status_code = 401

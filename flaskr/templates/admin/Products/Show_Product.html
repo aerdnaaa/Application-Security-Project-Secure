@@ -32,6 +32,7 @@
                     <th scope="col">Selling Price</th>
                     <th scope="col">Cost Price</th>
                     <th scope="col">Category</th>
+                    <th scope="col">Stock Level</th>
                     <th scope="col">Status</th>
                     <th scope="col"></th>
                 </tr>
@@ -55,14 +56,17 @@
                     write_data_to_table(product_array.data)
                 }
             };
-
             xmlhttp.open("GET", url, true);
+            {#xmlhttp.withCredentials = true;#}
+            {#xmlhttp.setRequestHeader('cookie', '{{ cookie }}')#}
+            console.log(xmlhttp)
             xmlhttp.send()
+            console.log(xmlhttp)
 
         }
 
         function write_data_to_table(data) {
-            let column_list = ["productName", "productImage", "productDescription", "productSellingPrice", "productCostPrice", "productCategory"]
+            let column_list = ["productName", "productImage", "productDescription", "productSellingPrice", "productCostPrice", "productCategory", "productStock"]
             let tbody = document.getElementsByClassName("tbody")[0];
             while (tbody.firstChild) {
                 tbody.firstChild.remove();

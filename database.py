@@ -164,8 +164,9 @@ c = conn.cursor()
 # print(c.fetchall())
 # conn.close()
 
-# c.execute("SELECT * FROM reviews")
-# print(c.fetchall())
+# c.execute("UPDATE users SET admin='y' WHERE username='keith12345' ")
+# conn.commit()
+# conn.close()
 
 # c.execute("""SELECT * FROM users WHERE username='Admin' AND password='admin' """)
 # print(c.fetchone())

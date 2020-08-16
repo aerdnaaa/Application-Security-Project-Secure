@@ -63,7 +63,7 @@ def emailus():
     c = conn.cursor()
     if request.method == "POST" and contactUsForm.validate():
         
-        c.execute("""INSERT INTO query VALUES (?, ?, ?,?)""",(contactUsForm.name.data,contactUsForm.email.data,contactUsForm.subject.data,contactUsForm.message.data)) 
+        c.execute("""INSERT INTO query VALUES (?, ?, ?,?)""", (contactUsForm.name.data,contactUsForm.email.data,contactUsForm.subject.data,contactUsForm.message.data)) 
         conn.commit()
         conn.close()
         return redirect(url_for('main.emailus'))

@@ -166,6 +166,7 @@ def signInOTP(token):
 @user_blueprint.route('/logout')
 def logout():
     logout_user()
+    session.pop('cart', None)
     return redirect(url_for('main.home'))
 
 

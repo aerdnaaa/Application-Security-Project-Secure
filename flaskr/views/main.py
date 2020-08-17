@@ -38,18 +38,6 @@ def About():
 
     return render_template("main/About.html", user=user)
 
-
-@main_blueprint.route("/FAQ")
-def FAQ():
-    try:
-        current_user.get_username()
-        user = current_user
-    except:
-        user = None
-
-    return render_template("main/FAQ.html", user=user)
-
-
 @main_blueprint.route("/Emailus", methods=["GET", "POST"])
 def emailus():
     try:

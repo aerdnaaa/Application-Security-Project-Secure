@@ -12,12 +12,14 @@ class Register(Form):
 class SignIn(Form):
     username = StringField("Username", [validators.InputRequired()])
     password = PasswordField("Password", [validators.InputRequired()])
+    recaptcha = RecaptchaField()
 
 class OTP(Form):
     OTP = StringField("", [validators.InputRequired()])
 
 class Forget(Form):
-    email = EmailField("Email", [validators.InputRequired()])
+    # email = EmailField("Email", [validators.InputRequired()])
+    username = StringField("Username", [validators.InputRequired()])
 
 class Reset(Form):
     password = PasswordField("New Password", [validators.InputRequired()])

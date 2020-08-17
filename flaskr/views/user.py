@@ -250,7 +250,8 @@ def forget():
     if request.method == "POST" and form.validate():
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
         c = conn.cursor()
-        c.execute("SELECT username, email FROM users WHERE email=?", (form.email.data,))
+        # c.execute("SELECT username, email FROM users WHERE email=?", (form.email.data,))
+        c.execute("SELECT username, email FROM users WHERE username=?", (form.username.data,))
         userInfo = c.fetchone()
         if userInfo is not None:
             # Generate Token
@@ -270,7 +271,7 @@ def forget():
 
             flash("A password reset link has been sent to your email!", "success")
         else:
-            flash("Email does not exist!", "danger")
+            flash("Oops! Something went wrong. Please try again!", "danger")
 
     return render_template("user/Forget.html", user=user, form=form)
 

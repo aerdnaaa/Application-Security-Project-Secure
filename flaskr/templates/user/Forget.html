@@ -64,7 +64,7 @@
             <form method="POST" action="">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="form-group">
-                    {{ render_field(form.email, class="form-control") }}
+                    {{ render_field(form.username, class="form-control") }}
                 </div>
                 <input id="submitButton" style="text-align: center;" type="submit" class="btn btn-primary"/>
             </form>

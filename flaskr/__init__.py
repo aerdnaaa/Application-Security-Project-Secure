@@ -102,5 +102,5 @@ def add_claims_to_access_token(identity):
 @app.after_request
 def apply_caching(response):
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
-    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Content-Type-Options'] = "nosniff"
     return response

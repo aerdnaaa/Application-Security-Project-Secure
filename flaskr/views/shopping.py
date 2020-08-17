@@ -1,11 +1,14 @@
 import os
 import pyffx
 import sqlite3
+from datetime import datetime
+import requests
 
 from flask import Blueprint, render_template, session, request, redirect, url_for, abort
 from flask_login import current_user
 from flaskr import file_directory
 from flaskr.forms import SearchForm
+from flaskr.services.loggingservice import Logging
 
 shopping_blueprint = Blueprint('shopping', __name__)
 
@@ -30,14 +33,20 @@ def ShoppingCart():
     result_cost = original_cost
 
     if 'voucher' in session:
-        voucher_code = session['voucher']
-        conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
-        c = conn.cursor()
-        c.execute("SELECT amount from vouchers where code=? ", (voucher_code,))
-        amount = c.fetchone()
-        result_cost -= amount[0]
+        if session['voucher'] != "":
+            voucher_code = session['voucher']
+            conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
+            c = conn.cursor()
+            c.execute("SELECT amount from vouchers where code=? ", (voucher_code,))
+            amount = c.fetchone()
+            result_cost -= amount[0]
+        else:
+            voucher_code = ""
+            session['voucher'] = ""
     else:
         voucher_code = ""
+        session['voucher'] = ""
+
     session["subtotal"] = original_cost
     session['amount'] = result_cost
 
@@ -56,7 +65,7 @@ def apply_voucher(voucher_code):
         if user_id == 0:
             # voucher used is general
             session['voucher'] = voucher_code
-        elif user_id == session["_user_id"]:
+        elif str(user_id) == str(session["_user_id"]):
             # voucher belongs to user with the current session
             session['voucher'] = voucher_code
     # delete voucher if voucher selected is empty
@@ -69,7 +78,7 @@ def apply_voucher(voucher_code):
 @shopping_blueprint.route("/checkout", methods=["GET", "POST"])
 def checkout():
     try:
-        current_user.get_username()
+        username = current_user.get_username()
         user = current_user
         user_id = session["_user_id"]
     except:
@@ -102,65 +111,63 @@ def checkout():
 
     # payment
     if request.method == "POST" and user is not None:
-        fullname = request.form.get('Name')
         month = request.form.get('Expiry_DateM')
         year = request.form.get('Expiry_DateY')
         cvv = request.form.get('CVV')
-        if fullname:
-            # validate credit card details
-            conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
-            c = conn.cursor()
-            c.execute("SELECT expiry, cvv, credit_card_number from paymentdetails where user_id=?", (user_id,))
-            result = c.fetchone()
-            valid_year, valid_month, valid_day = result[0].split('-')
-            valid_cvv = result[1]
-            if year == int(valid_year[3:]) and month == int(valid_month) and str(cvv) == str(valid_cvv):
-                # successful payment
-                # TODO add transaction to order, use voucher
-                pass
+        # validate credit card details
+        conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
+        c = conn.cursor()
+        c.execute("SELECT expiry, cvv, credit_card_number from paymentdetails where user_id=?", (user_id,))
+        result = c.fetchone()
+        valid_year, valid_month, valid_day = result[0].split('-')
+        e2 = pyffx.Integer(b'12376987ca98sbdacsbjkdwd898216jasdnsd98213912', length=len(str(result[1])))
+        valid_cvv = e2.decrypt(result[1])
+        print(cvv)
+        if int(year) == int(valid_year[2:]) and int(month) == int(valid_month) and str(cvv) == str(valid_cvv):
+            # successful payment
+            c.execute("select max(order_id) from orders")
+            try:
+                order_id = c.fetchone()[0] + 1
+            except TypeError:
+                order_id = 1
+            user_id = session["_user_id"]
+            voucher_code = session["voucher"]
+            date_of_purchase = datetime.now()
+            total_cost = session["amount"]
+
+            c.execute("INSERT into orders values (?, ?, ?, ?, ?)",
+                      (order_id, user_id, voucher_code, date_of_purchase, total_cost))
+            for item in session['cart']:
+                c.execute("INSERT into order_details values (?,?)", (order_id, item[0]))
+            conn.commit()
+            conn.close()
+
+            # uses the voucher (should only use it after payment is successful)
+            if '_user_id' in session and 'voucher' in session and session['voucher'] != '':
+                cookie = request.headers['cookie']
+                headers = {'cookie': cookie}
+                url = "http://localhost:5000/api/userVoucher/" + session["_user_id"]
+                response = requests.put(url, json={"code": session["voucher"]}, headers=headers)
+
+                data = response.json()["data"]
+                if data == "This is a general voucher":
+                    data = ""
             else:
-                # unsuccessful payment
-                # TODO needs logging
-                error = "Invalid Payment Details"
+                data = ""
 
+            # deletes voucher and cart session
+            del session['cart']
+            if 'voucher' in session:
+                del session['voucher']
 
-    
+            return render_template("shopping/Thankyou.html", data=data, user=user)
 
-    # uses the voucher (should only use it after payment is successful)
-    # if '_user_id' in session and 'voucher' in session:
-    #     cookie = request.headers['cookie']
-    #     headers = {'cookie': cookie}
-    #     url = "http://localhost:5000/api/userVoucher/" + session["_user_id"]
-    #     response = requests.put(url, json={"code": session["voucher"]}, headers=headers)
-
-    #     data = response.json()["data"]
-    #     if data == "This is a general voucher":
-    #         data = ""
-    # else:
-    data = ""
-
-                #     try:
-                #     payment = checkout_api.payments.request(
-                #         source = {
-                #             'number': result[2],
-                #             'expiry_month': ,
-                #             'expiry_year': 2025,
-                #             'cvv': '100'
-                #         },
-                #         amount = session['amount'],
-                #         currency = checkout_api.Currency.SGD,
-                #         reference='pay_ref'
-                #     )
-                #     print(payment.id)
-                #     print(payment.is_pending)
-                #     print(payment.http_response.body)
-                # except checkout_sdk.errors.CheckoutSdkError as e:
-                #     print(f'{e.http_status} {e.error_type} {e.elapsed} {e.request_id}')
-
-    # deletes voucher and cart session
-    # del session['cart']
-    # if 'voucher' in session:
-    #     del session['voucher']
+        else:
+            # unsuccessful payment
+            details = f"Failed transaction with the username of {username}."
+            Loggingtype = "Transaction"
+            Logging(Loggingtype, details)
+            error = "Invalid Payment Details"
 
     # checkout details
     cart = session['cart']
@@ -168,18 +175,21 @@ def checkout():
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()
     c.execute("SELECT amount from vouchers where code = ?", (voucher,))
-    voucher_cost = c.fetchone()
+    try:
+        voucher_cost = c.fetchone()[0]
+    except TypeError:
+        voucher_cost = 0
     subtotal = session['subtotal']
     amount = session['amount']
     order_details = {
         'cart': cart,
         'voucher': voucher,
-        'voucher_cost': voucher_cost[0],
+        'voucher_cost': voucher_cost,
         'subtotal': subtotal,
         'total': amount
     }
 
-    return render_template("shopping/Checkout.html", data=data, user=user, credit_card_number=sliced_credit_card_number, error_message=error, order_details=order_details)
+    return render_template("shopping/Checkout.html", user=user, credit_card_number=sliced_credit_card_number, error_message=error, order_details=order_details)
 
 
 @shopping_blueprint.route("/Add/<product_id>")
@@ -187,9 +197,7 @@ def addToCart(product_id):
     try:
         current_user.get_username()
     except:
-        user = None
-        return redirect(url_for('user.signin'))        
-
+        return redirect(url_for('user.signin'))
 
     if 'cart' in session:
         cart = session['cart']

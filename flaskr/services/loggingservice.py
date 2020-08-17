@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import datetime
 import flaskr.models.Logging
 import sqlite3, os
 from flaskr import file_directory

@@ -6,7 +6,7 @@ import math
 import random
 
 import pyffx
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session, make_response, abort
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, abort
 # FLASK LOGIN
 from flask_login import current_user, login_user, logout_user
 from flaskr import file_directory, mail
@@ -182,8 +182,8 @@ def signInOTP(token):
 # FLASK LOGIN
 @user_blueprint.route('/logout')
 def logout():
+    session.clear()
     logout_user()
-    session.pop('cart', None)
     return redirect(url_for('main.home'))
 
 

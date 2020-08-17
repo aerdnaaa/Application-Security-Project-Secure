@@ -21,7 +21,7 @@ def home():
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()
 
-    c.execute("SELECT rowid, * FROM products")
+    c.execute("SELECT * FROM products")
     products = c.fetchall()
     conn.close()
 

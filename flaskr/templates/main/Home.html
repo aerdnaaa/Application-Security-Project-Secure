@@ -408,13 +408,13 @@
               {% if i[7] != "inactive" %}
                 <div class="col-lg-3 col-md-4 col-6">
                   <div class="d-block mb-4 h-100" onmouseover="display(this);" onmouseout="hide(this);">
-                      <img class="img-fluid" src="/static/img/{{i[3]}}">
+                      <img class="img-fluid" src="/static/img/{{ i[2] }}">
                         <div class="centered">
-                          <a href="/Add/{{i[0]}}" title="Add to Shopping Cart"><i class="fas fa-shopping-cart fa-2x icon" style="color:black;"></i></a> &nbsp; &nbsp; 
-                          <a href="/Reviews/{{i[0]}}" title="View"><i class="fas fa-eye fa-2x icon" style="color:black;"></i></a>
+                          <a href="/Add/{{ i[0] }}" title="Add to Shopping Cart"><i class="fas fa-shopping-cart fa-2x icon" style="color:black;"></i></a> &nbsp; &nbsp;
+                          <a href="/Reviews/{{ i[0] }}" title="View"><i class="fas fa-eye fa-2x icon" style="color:black;"></i></a>
                         </div>
-                        <h6 style="text-align: center;"><strong>{{i[1]}}</strong></h6>
-                        <h6 style="text-align: center;">${{ i[4] }}</h6>
+                        <h6 style="text-align: center;"><strong>{{ i[1] }}</strong></h6>
+                        <h6 style="text-align: center;">${{ "%.2f"|format(i[4]) }}</h6>
                   </div>
                 </div>
               {% endif %}

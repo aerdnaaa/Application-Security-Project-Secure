@@ -50,7 +50,7 @@ def register():
     if request.method == "POST" and register.validate():
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
         c = conn.cursor()
-        if c.execute("SELECT username FROM users WHERE username= ? ", (register.username.data,)).fetchone() == None:
+        if c.execute("SELECT username FROM users WHERE username= ? ", (register.username.data,)).fetchone() is None:
             # Password policy
             policy = PasswordPolicy.from_names(
                 length=12,  # min length: 12

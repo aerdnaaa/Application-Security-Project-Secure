@@ -119,7 +119,7 @@ def manage_user():
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
         c = conn.cursor()
 
-        c.execute("SELECT rowid, * FROM users")
+        c.execute("SELECT * FROM users")
         users = c.fetchall()
         conn.close()
         return render_template("admin/Manage_Users/manage_user.html", title="users", users=users)

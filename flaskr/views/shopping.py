@@ -122,7 +122,6 @@ def checkout():
         valid_year, valid_month, valid_day = result[0].split('-')
         e2 = pyffx.Integer(b'12376987ca98sbdacsbjkdwd898216jasdnsd98213912', length=len(str(result[1])))
         valid_cvv = e2.decrypt(result[1])
-        print(cvv)
         if int(year) == int(valid_year[2:]) and int(month) == int(valid_month) and str(cvv) == str(valid_cvv):
             # successful payment
             c.execute("select max(order_id) from orders")
@@ -145,10 +144,10 @@ def checkout():
             # uses the voucher (should only use it after payment is successful)
             if '_user_id' in session and 'voucher' in session and session['voucher'] != '':
                 cookie = request.headers['cookie']
-                headers = {'cookie': cookie}
+                csrf_token = request.form.get('csrf_token')
+                headers = {'cookie': cookie, 'X-CSRF-Token': csrf_token}
                 url = "http://localhost:5000/api/userVoucher/" + session["_user_id"]
                 response = requests.put(url, json={"code": session["voucher"]}, headers=headers)
-
                 data = response.json()["data"]
                 if data == "This is a general voucher":
                     data = ""

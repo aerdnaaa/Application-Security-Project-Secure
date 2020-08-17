@@ -24,11 +24,12 @@ user_blueprint = Blueprint('user', __name__)
 def generate_user_id():
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()
-    import random
     user_id = random.randint(0,10000)
+
     while True:
-        c.execute("SELECT * FROM users where user_id=?", user_id)
-        if c.fetchone:
+        c.execute("SELECT * FROM users where user_id=?", (user_id,))
+        if c.fetchone():
+            print(user_id)
             user_id = random.randint(0, 10000)
         else:
             break
@@ -218,7 +219,7 @@ def Profile():
                                length=len(str(payment_form.SecretNumber.data)))
             encrypted_card_no = e1.encrypt(payment_form.CreditCardno.data)
             encrypted_card_CVV = e2.encrypt(payment_form.SecretNumber.data)
-            c.execute("INSERT INTO paymentdetails VALUES (?, ?, ?, ?, ?)", (user.get_username(),
+            c.execute("INSERT INTO paymentdetails VALUES (?, ?, ?, ?, ?)", (user.id,
                                                                             payment_form.Name.data,
                                                                             encrypted_card_no,
                                                                             payment_form.ExpiryDate.data,

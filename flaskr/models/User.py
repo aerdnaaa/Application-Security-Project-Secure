@@ -22,3 +22,5 @@ class User(UserMixin):
     def get_admin(self):
         return self.__admin
 
+    # def get_userid(self):
+    #     return self.id

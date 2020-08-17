@@ -92,7 +92,7 @@ def addToCart(productID):
 
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()
-    c.execute(" SELECT * FROM products WHERE rowid=? ", (productID))
+    c.execute(" SELECT * FROM products WHERE rowid=? ", (productID,))
     item = c.fetchone()
     # Check if product is inactive
     # If product not active, display error 404 page

@@ -126,15 +126,15 @@
                     smallDiv.setAttribute("class", "d-block mb-4 h-100")
                     let img = document.createElement("img");
                     img.setAttribute("class", "img-fluid")
-                    img.setAttribute("src", "/static/img/" + data[i]["voucherImage"])
+                    img.setAttribute("src", "/static/img/" + data[i]["image_path"])
                     let nameTag = document.createElement("h6");
                     nameTag.setAttribute("style", "text-align: center;")
                     let strongTag = document.createElement("strong");
-                    strongTag.innerText = data[i]["voucherName"]
+                    strongTag.innerText = data[i]["title"]
                     nameTag.appendChild(strongTag)
                     let codeTag = document.createElement("h6");
                     codeTag.setAttribute("style", "text-align: center;")
-                    codeTag.innerText = 'Code: ' + data[i]["voucherCode"]
+                    codeTag.innerText = 'Code: ' + data[i]["code"]
 
                     smallDiv.appendChild(img)
                     smallDiv.appendChild(nameTag)

@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from flask_restful import Resource
 import sqlite3, os, random, string
-from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt_claims
+from flask_login import current_user
 from flaskr import file_directory
 from flaskr.services.loggingservice import Logging
 
@@ -13,12 +13,22 @@ def get_random_alphanumeric_string(length):
 
 
 class UserVoucher(Resource):
-    @jwt_required
-    def get(self, username):
-        current_user = get_jwt_identity()
+    def get(self, user_id):
+        try:
+            identity = str(current_user.id)
+            has_account = True
+        except:
+            identity = 'none'
+            has_account = False
 
-        if current_user != username:
-            # need to log
+        if identity != user_id:
+            # logging
+            log_type = "Unauthorized Access"
+            if has_account:
+                log_details = f"A user with the username {current_user.get_username()} tried to add a new product."
+            else:
+                log_details = "An unknown user tried to change status of a product."
+            Logging(log_type, log_details)
             response = jsonify(data="You do not have authorized access to perform this action.")
             response.status_code = 401
             return response
@@ -26,19 +36,20 @@ class UserVoucher(Resource):
             conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
             conn.row_factory = sqlite3.Row
             c = conn.cursor()
-            c.execute("SELECT * FROM vouchers WHERE user_id = ?", (username,))
+            c.execute("SELECT * FROM vouchers WHERE user_id = ?", (user_id,))
             conn.commit()
             vouchers = [dict(row) for row in c.fetchall()]
             conn.close()
 
             return jsonify(data=vouchers)
 
-    @jwt_required
-    def post(self, username):
-        claims = get_jwt_claims()
-        admin = claims['admin']
-        identity = get_jwt_identity()
-
+    def post(self, user_id):
+        try:
+            admin = current_user.get_admin()
+            has_account = True
+        except:
+            admin = 'n'
+            has_account = False
         if admin == 'y':
             conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
             c = conn.cursor()
@@ -57,26 +68,33 @@ class UserVoucher(Resource):
             voucher_status = "unused"
             used_date = ""
 
-            c.execute("INSERT INTO vouchers VALUES (?, ?, ?, ?, ?, ?, ?)",
+            c.execute("INSERT INTO vouchers VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                       (voucher_title, voucher_code, voucher_description, voucher_image, voucher_amount, voucher_status,
-                       used_date, username))
+                       used_date, user_id))
             conn.commit()
             conn.close()
 
-            return jsonify(data="Voucher created with user id of {}".format(username))
+            return jsonify(data="Voucher created with user id of {}".format(user_id))
         else:
             # logging
             log_type = "Unauthorized Access"
-            log_details = f"A user with the username {identity} tried to add a new voucher."
+            if has_account:
+                log_details = f"A user with the username {current_user.get_username()} tried to add a new product."
+            else:
+                log_details = "An unknown user tried to change status of a product."
             Logging(log_type, log_details)
             response = jsonify(data="You do not have authorized access to perform this action.")
             response.status_code = 401
             return response
 
-    @jwt_required
-    def put(self, username):
-        identity = get_jwt_identity()
-        if username == identity:
+    def put(self, user_id):
+        try:
+            identity = str(current_user.id)
+            has_account = True
+        except:
+            identity = None
+            has_account = False
+        if user_id == identity:
             import datetime
             request_json_data = request.get_json(force=True)
             code = request_json_data["code"]
@@ -91,7 +109,7 @@ class UserVoucher(Resource):
                 conn.commit()
                 conn.close()
 
-                return jsonify(data=f"Voucher with the code {code} from username {username} has been used.")
+                return jsonify(data=f"Voucher with the code {code} from username {user_id} has been used.")
 
             else:
                 c.execute("SELECT * FROM vouchers WHERE code=? AND user_id=0", (code,))
@@ -103,11 +121,14 @@ class UserVoucher(Resource):
                     conn.commit()
                     conn.close()
 
-                    return jsonify(data=f"Voucher with the code {code} from username {username} has already been used.")
+                    return jsonify(data=f"Voucher with the code {code} from username {user_id} has already been used.")
         else:
             # logging
             log_type = "Unauthorized Access"
-            log_details = f"A user with the username {identity} tried to use a voucher."
+            if has_account:
+                log_details = f"A user with the username {current_user.get_username()} tried to change status of a product."
+            else:
+                log_details = "An unknown user tried to change status of a product."
             Logging(log_type, log_details)
             response = jsonify(data="You do not have authorized access to perform this action.")
             response.status_code = 401

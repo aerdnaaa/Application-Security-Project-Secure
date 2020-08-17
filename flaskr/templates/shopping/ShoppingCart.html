@@ -121,12 +121,12 @@
                                         <tbody>
                                         {% for i in cart %}
                                             <tr>
-                                                <td><img src="/static/img/{{ i[1] }}" style="height:50px; width:50px;"/>
+                                                <td><img src="/static/img/{{ i[2] }}" style="height:50px; width:50px;"/>
                                                 </td>
-                                                <td>{{ i[0] }}</td>
+                                                <td>{{ i[1] }}</td>
                                                 <td>In stock</td>
                                                 <td class="text-center">1</td>
-                                                <td class="text-right">${{ i[3] }}</td>
+                                                <td class="text-right">${{ "$%.2f"|format(i[4]) }}</td>
                                                 <td class="text-right">
                                                     <button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i>
                                                     </button>
@@ -154,10 +154,10 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-sm-6">
-                                Original Amount: {{ original_cost }}
+                                Original Amount: ${{ "%.2f"|format(original_cost) }}
                             </div>
                             <div class="col-sm-6">
-                                Result Amount: {{ result_cost }}
+                                Result Amount: ${{ "%.2f"|format(result_cost) }}
                             </div>
                         </div>
                         
@@ -168,6 +168,7 @@
                                     Shopping</a>
                             </div>
                             <div class="col-sm-12 col-md-6 text-right">
+                                
                                 <a class="btn btn-lg btn-block btn-success text-uppercase" href="{{ url_for('shopping.checkout') }}">Checkout</a>
                             </div>
                             {% else %}
@@ -185,19 +186,19 @@
 
     <script>
         {% if user != None %}
-            load_data('{{user.get_username()}}', '{{ voucher_code }}')
+            load_data('{{user.id}}', '{{ voucher_code }}')
         {% else %}
-            load_data('', '')
+            load_data('', '{{ voucher_code }}')
         {% endif %}
 
 
-        function load_data(username, voucher_code) {
+        function load_data(id, voucher_code) {
             let url = 'http://localhost:5000/api/vouchers';
             let xmlhttp = new XMLHttpRequest();
 
             xmlhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
-                    let product_array = JSON.parse(this.responseText);
+                    let product_array = JSON.parse(this.responseText)
                     write_data(product_array.data, voucher_code)
                 }
             };
@@ -205,8 +206,8 @@
             xmlhttp.open("GET", url, true);
             xmlhttp.send()
 
-            if (username != '') {
-                let url2 = 'http://localhost:5000/api/userVoucher/' + username;
+            if (id != '') {
+                let url2 = 'http://localhost:5000/api/userVoucher/' + id;
                 let xmlhttp = new XMLHttpRequest();
 
                 xmlhttp.onreadystatechange = function () {

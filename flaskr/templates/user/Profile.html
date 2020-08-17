@@ -67,7 +67,6 @@
 {% block content %}
     {% from "includes/_formhelper.html" import render_field %}
 
-    <body>
     <br>
     <h1>Profile</h1>
     <hr>
@@ -141,7 +140,6 @@
                         </form>
                     </div>
                 </div>
-            </div>
                 {% else %}
                 <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
                     <div class="card-body">
@@ -171,8 +169,8 @@
                         </form>
                     </div>
                 </div>
+                {% endif %}
             </div>
-    {% endif %}
             <br>
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
@@ -260,7 +258,7 @@
 
     <script>
 
-        get_voucher_data('{{ user.get_username() }}')
+        get_voucher_data('{{ user.id }}')
 
         function choose_option(button, id) {
             let original_active = document.getElementsByClassName("active")[0];
@@ -274,8 +272,8 @@
             selected_div.classList.add("show-div");
         }
 
-        function get_voucher_data(username) {
-            let url = 'http://localhost:5000/api/userVoucher/' + username;
+        function get_voucher_data(user_id) {
+            let url = 'http://localhost:5000/api/userVoucher/' + user_id;
             let xmlhttp = new XMLHttpRequest();
 
             xmlhttp.onreadystatechange = function () {

@@ -29,6 +29,7 @@ app = Flask(__name__)
 api_app = Api(app)
 jwt = JWTManager(app)
 csrf = CSRFProtect(app)
+CORS(app)
 app.config.update(
     MAIL_SERVER='smtp.gmail.com',
     MAIL_PORT=465,
@@ -37,7 +38,7 @@ app.config.update(
     MAIL_PASSWORD='ionevvqefbbwmcip'
 )
 mail = Mail(app)
-CORS(app)
+
 login_manager = LoginManager(app)
 
 app.config['RECAPTCHA_PUBLIC_KEY'] = '6LfmcrMZAAAAAJcTRMYVFIii7-reRZ4a_o5V1m37'
@@ -98,3 +99,7 @@ def add_claims_to_access_token(identity):
     admin = c.fetchone()[0]
     return {"admin": admin}
 
+@app.after_request
+def apply_caching(response):
+    response.headers["X-Frame-Options"] = "SAMEORIGIN"
+    return response

@@ -48,8 +48,7 @@ def register():
             # If password has 0 errors and meets complexity requirement, password hashed and stored in database
             if check == []:
                 pw_hash = hashlib.sha512(register.password.data.encode()).hexdigest()
-                c.execute("INSERT INTO users VALUES (?, ?, ?, ?)",
-                          (register.username.data, register.email.data, pw_hash, 'n'))
+                c.execute("INSERT INTO users VALUES (?, ?, ?, ?)", (register.username.data, register.email.data, pw_hash, 'n'))
                 conn.commit()
                 conn.close()
                 return redirect(url_for('user.signin'))
@@ -96,7 +95,6 @@ def signin():
             flash("Incorrect username or password")
         else:
             if user[3] == pw_hash:
-                #====================== TEST =======================#
                 # Generate OTP  
                 digits = "0123456789"
                 OTP = ""    
@@ -171,46 +169,6 @@ def logout():
 
 
 # ============================================= User Page =============================================#
-# @user_blueprint.route("/Profile", methods=["GET", "POST"])
-# def Profile():
-#     if 'username' in session:
-#         user = User(session['username'], session['email'], session['password'], session['question'], session['answer'])
-#         # get payment information if have
-#         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
-#         c = conn.cursor()
-#         c.execute("SELECT * FROM paymentdetails WHERE username='{}' ".format(user.get_username()))
-#         # self define paymentinformation and fetch one and return into payment information variable.
-#         paymentinformation = c.fetchone()
-#         # get all the 4 attribute from the PaymentInfo.py
-#         if paymentinformation:
-#             payment_details = PaymentInfo(paymentinformation[1], paymentinformation[2], paymentinformation[3],
-#                                           int(paymentinformation[4]))
-#         else:
-#             payment_details = PaymentInfo("", "", "", "")
-#     else:
-#         return redirect(url_for('user.signin'))
-#
-#     payment_form = PaymentOptions(request.form)
-#     if request.method == "POST" and payment_form.validate():
-#         print("this code is running")
-#         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
-#         c = conn.cursor()
-#         c.execute("SELECT * FROM paymentdetails WHERE username='{}' ".format(user.get_username()))
-#         result = c.fetchone()
-#         if not result:
-#             c.execute("INSERT INTO paymentdetails VALUES ('{}','{}','{}','{}','{}')".format(user.get_username(),
-#                                                                                             payment_form.Name.data,
-#                                                                                             payment_form.CreditCardno.data,
-#                                                                                             payment_form.ExpiryDate.data,
-#                                                                                             payment_form.SecretNumber.data))
-#             conn.commit()
-#             conn.close()
-#             return redirect(url_for('user.Profile'))
-#         else:
-#             flash('Only can store 1 card detail')
-#
-#     return render_template("user/Profile.html", user=user, form=payment_form, payment_details=payment_details)
-
 @user_blueprint.route("/Profile", methods=["GET", "POST"])
 def Profile():
     try:

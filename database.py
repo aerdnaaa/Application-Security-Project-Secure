@@ -100,6 +100,35 @@ def create_tables():
         )""")
     print('query table created')
 
+    # Create order table
+    c.execute("""CREATE TABLE IF NOT EXISTS orders (
+        order_id integer primary key,
+        user_id integer,
+        voucher_code text,
+        date_of_purchase text,
+        total_cost real,
+        FOREIGN KEY (user_id)
+            references users (user_id)
+            on update cascade 
+            on delete cascade 
+    )""")
+    print('order table created')
+
+    # Create order_details table
+    c.execute("""CREATE TABLE IF NOT EXISTS order_details (
+        order_id integer,
+        product_id integer,
+        FOREIGN KEY (order_id)
+            references orders (order_id)
+            on update cascade 
+            on delete cascade, 
+        FOREIGN KEY (product_id)
+            references products (product_id)
+            on update cascade 
+            on delete cascade 
+    )""")
+    print('order details table created')
+
 
 def add_sample_data():
     pw_hash = hashlib.sha512("Admin@123456".encode()).hexdigest()
@@ -150,12 +179,6 @@ def add_sample_data():
     e2 = pyffx.Integer(b'12376987ca98sbdacsbjkdwd898216jasdnsd98213912', length=3)
     encrypted_card_no = e1.encrypt(credit_card_1)
     encrypted_card_cvv = e2.encrypt(cvv_1)
-    c.execute("INSERT INTO paymentdetails VALUES (999, 'Andre Goh', ?, '2022-01-01', ?)",
-              (encrypted_card_no, encrypted_card_cvv))
-    credit_card_2 = '5555111122223333'
-    cvv_2 = 562
-    encrypted_card_no = e1.encrypt(credit_card_2)
-    encrypted_card_cvv = e2.encrypt(cvv_2)
     c.execute("INSERT INTO paymentdetails VALUES (999, 'Andre Goh', ?, '2022-01-01', ?)",
               (encrypted_card_no, encrypted_card_cvv))
     print("insert payment details into table")

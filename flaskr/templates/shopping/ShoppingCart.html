@@ -126,7 +126,7 @@
                                                 <td>{{ i[1] }}</td>
                                                 <td>In stock</td>
                                                 <td class="text-center">1</td>
-                                                <td class="text-right">${{ i[4] }}</td>
+                                                <td class="text-right">${{ "$%.2f"|format(i[4]) }}</td>
                                                 <td class="text-right">
                                                     <button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i>
                                                     </button>
@@ -153,10 +153,10 @@
                         </div>
                         <div class="row mt-2">
                             <div class="col-sm-6">
-                                Original Amount: {{ original_cost }}
+                                Original Amount: ${{ "%.2f"|format(original_cost) }}
                             </div>
                             <div class="col-sm-6">
-                                Result Amount: {{ result_cost }}
+                                Result Amount: ${{ "%.2f"|format(result_cost) }}
                             </div>
                         </div>
                         
@@ -167,6 +167,7 @@
                                     Shopping</a>
                             </div>
                             <div class="col-sm-12 col-md-6 text-right">
+                                
                                 <a class="btn btn-lg btn-block btn-success text-uppercase" href="{{ url_for('shopping.checkout') }}">Checkout</a>
                             </div>
                             {% else %}

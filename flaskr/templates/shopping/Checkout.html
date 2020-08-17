@@ -2,14 +2,96 @@
 {% block title %}Check Out{% endblock %}
 
 {% block content %}
-<br>
-<div class="container mt-2">
-<div class="row d-flex justify-content-center">
+    <br>
+    <div class="container mt-2">
+        <div class="row">
+            <div class="col-8">
+                <h2 class="display-4">Order Details</h2>
+                <table class="table">
+                    <thead class="thead-light">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Product Image</th>
+                        <th scope="col">Product Description</th>
+                        <th scope="col">Cost</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Subtotal</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for product in order_details['cart'] %}
+                        <tr>
+                            <th scope="row">{{ loop.index }}</th>
+                            <td>{{ product[1] }}</td>
+                            <td><img src="/static/img/{{ product[2] }}" style="height:50px; width:50px;"/></td>
+                            <td>{{ product[3] }}</td>
+                            <td>{{ "%.2f"|format(product[4]) }}</td>
+                            <td>1</td>
+                            <td>{{"%.2f"|format(1 * product[4]) }}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="7">
+                            <h4 class="text-right"><b>Subtotal:</b> ${{ "%.2f"|format(order_details['subtotal']) }}</h4>
+                            {% if order_details['voucher'] %}
+                                <h4 class="text-right"><b>Voucher:</b> -${{ "%.2f"|format(order_details['voucher_cost']) }}</h4>
+                            {% endif %}
+                            <h4 class="text-right"><b>Total:</b> ${{ "%.2f"|format(order_details['total']) }}</h4>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-4">
+                <h2 class="display-4">Payment</h2>
+                {% if credit_card_number %}
+
+                    <!-- person has a card -->
+                    <form method="POST">
+                        <div class="form-group">
+                            <label for="Card_No">Card Number</label>
+                            <input type="text" style='width:234.6px;' disabled class="form-control" name='Card_No'
+                                   id="Card_No" aria-describedby="emailHelp" placeholder="{{ credit_card_number }} ">
+                        </div>
+                        <div class="form-group" style='display:inline-block'>
+                            <div class='form-group'></div>
+                            <label for="Expiry_Date" style='display:block;'>Expiry Date</label>
+                            <input type="number" class="form-control" style='width:80px; display:inline-block;'
+                                   name='Expiry_DateM' id="Expiry_DateM" min="1" max="12" placeholder="MM">
+                            <input type="number" class="form-control" style='width:80px; display:inline-block;'
+                                   name="Expiry_DateY" id="Expiry_DateY" min="20" max="99" placeholder="YY">
+                        </div>
+                        <div class="form-group" style='display:inline-block;  padding-left:30px;'>
+                            <label for='CVV' style='display:block;' for="CVV">CVV</label>
+                            <input type="password" style="width:40px; display:inline-block; " class="form-control"
+                                   id="CVV">
+                        </div>
+                        {% if error_message %}
+                            <div class="alert alert-danger" role="alert" style='width:234.6px;'>
+                                {{ error_message }}
+                            </div>
+                        {% endif %}
+                        <button style='display:block; width:234.6px;' type="submit" class='btn btn-primary'>Pay
+                            ${{ "%.2f"|format(order_details['total']) }}</button>
+                    </div>
+                    </form>
+                {% else %}
+
+
+                {% endif %}
+        </div>
+    </div>
+    </div>
+
+
+
+    <!-- <div class="row d-flex justify-content-center">
     <div class="col-sm-6">
         <p class="text-center text-uppercase">Thank you for purchasing with us ! </p>
         <p class="text-center text-uppercase">We hope to see you soon !</p>
         <p class="text-center text-uppercase font-weight-light">{{ data }}</p>
     </div>
-</div>
-</div>
+</div> -->
 {% endblock %}

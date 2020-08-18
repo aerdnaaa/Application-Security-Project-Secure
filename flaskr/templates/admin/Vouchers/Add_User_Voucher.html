@@ -25,6 +25,7 @@
             <div class="row mb-2">
                 <div class="col-sm-8 mx-auto">
                     <form>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         <div class="form-group">
                             <label for="voucherUsers">Users of this voucher</label>
                             <select multiple class="form-control" name="voucherUsers" id="voucherUsers">
@@ -75,10 +76,9 @@
                         window.location.href = "http://localhost:5000/manage_user"
                     }
                 }
-
                 xmlhttp.open("POST", url, true);
+                xmlhttp.setRequestHeader('x-csrf-token', '{{ csrf_token() }}')
                 xmlhttp.send(JSON.stringify(data))
-                console.log(name_list[name])
             }
         }
     </script>

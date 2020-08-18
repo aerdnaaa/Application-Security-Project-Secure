@@ -37,16 +37,13 @@ class Vouchers(Resource):
             identity = None
             admin = 'n'
             has_account = False
+
         if admin == "y":
             voucher_title = request.form.get('voucherNameInput')
             voucher_code = request.form.get('voucherCode')
             voucher_img = request.files.get('voucherImage')
             voucher_description = request.form.get('voucherDescription')
             voucher_amount = request.form.get('voucherAmountInput')
-
-            filename = voucher_img.filename
-            filepath = 'vouchers/' + filename
-            voucher_img.save(os.path.join(file_directory, 'flaskr/static/img', filepath))
 
             conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
             c = conn.cursor()
@@ -65,9 +62,13 @@ class Vouchers(Resource):
                 response.status_code = 400
                 return response
 
-            # validate input to not be none
-            if None in {voucher_title, voucher_code, voucher_img, voucher_description, voucher_amount}:
-                response = jsonify(data="Missing fields.")
+            # validate if voucher image is in form
+            try:
+                filename = voucher_img.filename
+                filepath = 'vouchers/' + filename
+                voucher_img.save(os.path.join(file_directory, 'flaskr/static/img', filepath))
+            except PermissionError:
+                response = jsonify(data="No Voucher Image in form.")
                 response.status_code = 400
                 return response
 

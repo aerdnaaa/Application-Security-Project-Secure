@@ -33,7 +33,7 @@
 </style>
 <div class="container">
     <br>
-    <h2 id="formHeader" class="animated bounceIn"><a href="/Signin" id="signin">Sign In</a> <span style="color: rgba(232, 232, 232, 1);">/</span> <a href="/Register" id="register">Register</a></h2>
+    <h2 id="formHeader" class="animated bounceIn"><a href="{{ url_for('user.signin') }}" id="signin">Sign In</a> <span style="color: rgba(232, 232, 232, 1);">/</span> <a href="{{ url_for('user.register') }}" id="register">Register</a></h2>
     <div class="row justify-content-center">
         <div class="col-8" id="formContent">
             {% with messages = get_flashed_messages() %}
@@ -63,7 +63,7 @@
                 <input id="submitButton" style="text-align: center;" type="submit" value="Sign In" class="btn btn-primary"/>
             </form>
             <br>
-            <a href="/Forget" style="text-decoration: none;">Forgot Password?</a>
+            <a href="{{ url_for('user.forget') }}" style="text-decoration: none;">Forgot Password?</a>
         </div> <!-- col -->
     </div> <!-- row -->
 </div> <!-- container -->

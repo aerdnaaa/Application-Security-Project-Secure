@@ -163,11 +163,10 @@ def signInOTP(token):
 
     form = OTP(request.form)
     resetToken = ''
-    if request.method=="POST" and not expired:
+    if request.method == "POST" and not expired:
         if form.OTP.data == otp:
             conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
             c = conn.cursor()
-            # c.execute("SELECT rowid, * FROM users WHERE username=?", (username,))
             c.execute("SELECT * FROM users WHERE username=?", (username,))
             user = c.fetchone()
             today = str(date.today())

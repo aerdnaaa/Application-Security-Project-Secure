@@ -10,7 +10,7 @@
                 </div><!-- /.col -->
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="/Admin" style="text-decoration: none;">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{{ url_for('admin.admin') }}" style="text-decoration: none;">Home</a></li>
                         <li class="breadcrumb-item active">Vouchers</li>
                     </ol>
                 </div><!-- /.col -->
@@ -49,9 +49,9 @@
             let xmlhttp = new XMLHttpRequest();
 
             xmlhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && this.status == 200) {
+                if (this.readyState === 4 && this.status === 200) {
                     let product_array = JSON.parse(this.responseText);
-                    write_data_to_table(product_array.data)
+                    write_data_to_table(product_array.data, '{{ csrf_token() }}')
                 }
             };
 
@@ -60,7 +60,7 @@
 
         }
 
-        function write_data_to_table(data) {
+        function write_data_to_table(data, csrf_token) {
             let column_list = ["title", "image_path", "code", "description", "amount"]
             let tbody = document.getElementsByClassName("tbody")[0];
             while (tbody.firstChild) {
@@ -74,7 +74,7 @@
                 tr.appendChild(th);
                 for (const value of column_list) {
                     let td = document.createElement("td");
-                    if (value == "image_path") {
+                    if (value === "image_path") {
                         let img = document.createElement("img");
                         img.setAttribute("src", "/static/img/" + data[i][value])
                         img.setAttribute("class", "img-fluid")
@@ -89,7 +89,7 @@
                 let buttonTd = document.createElement("td");
                 let button = document.createElement("button");
 
-                if (data[i]['status'] == "active") {
+                if (data[i]['status'] === "active") {
                     statusTd.innerText = data[i]['status']
                     statusTd.setAttribute('style', 'color:green;')
                     button.setAttribute("class", "btn btn-danger")
@@ -101,7 +101,7 @@
                     button.innerText = "Activate";
                 }
                 button.addEventListener('click', () => {
-                    edit_status(button)
+                    edit_status(button, csrf_token)
                 })
                 buttonTd.appendChild(button)
                 tr.appendChild(statusTd)
@@ -112,11 +112,11 @@
 
         }
 
-        function edit_status(button) {
+        function edit_status(button, csrf_token) {
             let url = "http://localhost:5000/api/vouchers";
             let voucherName = button.parentElement.parentElement.children[1].innerHTML;
             let voucherStatus = ''
-            if (button.innerText == "Deactivate") {
+            if (button.innerText === "Deactivate") {
                 voucherStatus = 'inactive'
             } else {
                 voucherStatus = 'active'
@@ -125,11 +125,11 @@
                 voucher_name: voucherName,
                 voucher_status: voucherStatus
             }
-            {#console.log(data)#}
             fetch(url, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrf_token
                 },
                 body: JSON.stringify(data)
             })

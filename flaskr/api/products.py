@@ -1,7 +1,9 @@
+import os
+import sqlite3
+
 from flask import request, jsonify, redirect, url_for
-from flask_restful import Resource
-import sqlite3, os
 from flask_login import current_user
+from flask_restful import Resource
 from flaskr import file_directory
 from flaskr.services.loggingservice import Logging
 

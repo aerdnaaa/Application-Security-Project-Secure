@@ -118,20 +118,20 @@ def signin():
             if user[3] == pw_hash:
                 # Generate OTP
                 digits = "0123456789"
-                OTP = ""
-                for i in range(8) :
-                    OTP += digits[math.floor(random.random() * 10)]
+                otp = ""
+                for i in range(8):
+                    otp += digits[math.floor(random.random() * 10)]
 
                 s = Serializer('secret_key', 120)
                 # Store username and OTP in token for authentication
-                token = s.dumps([user[1], OTP]).decode('UTF-8')
+                token = s.dumps([user[1], otp]).decode('UTF-8')
                 print(token)
                 # Send Email to user
                 mail.send_message(
                     'Indirect Home Gym Sign In',
                     sender='ballsnpaddles@gmail.com',
                     recipients=[user[2]],
-                    body="Hi {},\n\nYour 8 digit OTP is {}. It will expire in 2 minutes.\n\n If you did not request for this OTP, please reset your password as soon as possible.\n\nCheers!\nIndirect Home Gym Team".format(user[1], OTP)
+                    body="Hi {},\n\nYour 8 digit OTP is {}. It will expire in 2 minutes.\n\n If you did not request for this OTP, please reset your password as soon as possible.\n\nCheers!\nIndirect Home Gym Team".format(user[1], otp)
                 )
                 return redirect(url_for('user.signInOTP', token=token))
             else:
@@ -171,12 +171,14 @@ def signInOTP(token):
             user = c.fetchone()
             today = str(date.today())
             if datetime.strptime(today, "%Y-%m-%d").date() >= datetime.strptime(user[5], "%Y-%m-%d").date():
+                print("Token expired")
                 # Generate Token
                 s = Serializer('secret_key', 300)
                 # Store username in token for authentication
                 resetToken = s.dumps(user[1]).decode('UTF-8')
                 # return redirect(url_for("user.reset", token=resetToken))
                 flash("Your password has expired!", "reset")
+                user = None
             else:
                 userObj = User(user[0], user[1], user[2], user[3], user[4])
                 if userObj.get_admin() == 'y':
@@ -189,6 +191,7 @@ def signInOTP(token):
             flash("Invalid OTP", "error")
 
     return render_template("user/OTP.html", user=user, form=form, expired=expired, token=resetToken)
+
 
 # FLASK LOGIN
 @user_blueprint.route('/logout')

@@ -1,7 +1,11 @@
+import os
+import random
+import sqlite3
+import string
+
 from flask import request, jsonify
-from flask_restful import Resource
-import sqlite3, os, random, string
 from flask_login import current_user
+from flask_restful import Resource
 from flaskr import file_directory
 from flaskr.services.loggingservice import Logging
 

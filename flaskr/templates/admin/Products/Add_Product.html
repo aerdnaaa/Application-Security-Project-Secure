@@ -25,6 +25,7 @@
             <div class="row mb-2">
                 <div class="col-sm-8 mx-auto">
                     <form action="http://localhost:5000/api/products" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         <div class="form-group">
                             <label for="productNameInput">Name of product</label>
                             <input type="text" class="form-control" name="productNameInput" id="productNameInput" placeholder="Enter Name">

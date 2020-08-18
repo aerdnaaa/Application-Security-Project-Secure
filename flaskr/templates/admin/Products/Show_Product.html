@@ -53,19 +53,15 @@
             xmlhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && this.status == 200) {
                     let product_array = JSON.parse(this.responseText);
-                    write_data_to_table(product_array.data)
+                    write_data_to_table(product_array.data, '{{ csrf_token() }}')
                 }
             };
             xmlhttp.open("GET", url, true);
-            {#xmlhttp.withCredentials = true;#}
-            {#xmlhttp.setRequestHeader('cookie', '{{ cookie }}')#}
-            console.log(xmlhttp)
             xmlhttp.send()
-            console.log(xmlhttp)
 
         }
 
-        function write_data_to_table(data) {
+        function write_data_to_table(data, csrf_token) {
             let column_list = ["productName", "productImage", "productDescription", "productSellingPrice", "productCostPrice", "productCategory", "productStock"]
             let tbody = document.getElementsByClassName("tbody")[0];
             while (tbody.firstChild) {
@@ -105,7 +101,7 @@
                     button.innerText = "Activate";
                 }
                 button.addEventListener('click', () => {
-                    edit_status(button)
+                    edit_status(button, csrf_token)
                 })
                 buttonTd.appendChild(button)
                 tr.appendChild(statusTd)
@@ -116,7 +112,7 @@
 
         }
 
-        function edit_status(button) {
+        function edit_status(button, csrf_token) {
             let url = "http://localhost:5000/api/products";
             let productName = button.parentElement.parentElement.children[1].innerHTML;
             let productStatus = ''
@@ -129,11 +125,11 @@
                 product_name: productName,
                 product_status: productStatus
             }
-            console.log(data)
             fetch(url, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrf_token
                 },
                 body: JSON.stringify(data)
             })

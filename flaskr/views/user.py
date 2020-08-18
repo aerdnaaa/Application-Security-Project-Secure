@@ -106,7 +106,6 @@ def signin():
         pw_hash = hashlib.sha512(signin.password.data.encode()).hexdigest()
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
         c = conn.cursor()
-        # c.execute("SELECT rowid, * FROM users WHERE username=? AND password=?", (signin.username.data, pw_hash))
         c.execute("SELECT * FROM users WHERE username=?", (signin.username.data,))
         user = c.fetchone()
 
@@ -162,11 +161,11 @@ def signInOTP(token):
 
     form = OTP(request.form)
 
-    if request.method=="POST" and not expired:
+    if request.method == "POST" and not expired:
         if form.OTP.data == otp:
             conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
             c = conn.cursor()
-            c.execute("SELECT rowid, * FROM users WHERE username=?", (username,))
+            c.execute("SELECT * FROM users WHERE username=?", (username,))
             user = c.fetchone()
             userObj = User(user[0], user[1], user[2], user[3], user[4])
             if userObj.get_admin() == 'y':

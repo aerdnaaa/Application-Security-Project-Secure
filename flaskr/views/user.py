@@ -17,6 +17,7 @@ from flaskr.services.loggingservice import Logging
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 # PASSWORD STRENGTH CHECKER
 from password_strength import PasswordPolicy
+from datetime import date, timedelta, datetime
 
 user_blueprint = Blueprint('user', __name__)
 
@@ -67,8 +68,9 @@ def register():
             if check == []:
                 pw_hash = hashlib.sha512(register.password.data.encode()).hexdigest()
                 unique_user_id = generate_user_id()
-                c.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?)",
-                          (unique_user_id, register.username.data, register.email.data, pw_hash, 'n'))
+                expiryDate = str(date.today() + timedelta(days=180))
+                c.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)",
+                          (unique_user_id, register.username.data, register.email.data, pw_hash, 'n', expiryDate, pw_hash))
                 conn.commit()
                 conn.close()
                 return redirect(url_for('user.signin'))
@@ -160,24 +162,33 @@ def signInOTP(token):
         expired = True
 
     form = OTP(request.form)
-
+    resetToken = ''
     if request.method == "POST" and not expired:
         if form.OTP.data == otp:
             conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
             c = conn.cursor()
             c.execute("SELECT * FROM users WHERE username=?", (username,))
             user = c.fetchone()
-            userObj = User(user[0], user[1], user[2], user[3], user[4])
-            if userObj.get_admin() == 'y':
-                login_user(userObj)
-                return redirect(url_for('admin.admin'))
+            today = str(date.today())
+            if datetime.strptime(today, "%Y-%m-%d").date() >= datetime.strptime(user[5], "%Y-%m-%d").date():
+                # Generate Token
+                s = Serializer('secret_key', 300)
+                # Store username in token for authentication
+                resetToken = s.dumps(user[1]).decode('UTF-8')
+                # return redirect(url_for("user.reset", token=resetToken))
+                flash("Your password has expired!", "reset")
             else:
-                login_user(userObj)
-                return redirect(url_for('main.home'))
+                userObj = User(user[0], user[1], user[2], user[3], user[4])
+                if userObj.get_admin() == 'y':
+                    login_user(userObj)
+                    return redirect(url_for('admin.admin'))
+                else:
+                    login_user(userObj)
+                    return redirect(url_for('main.home'))
         else:
-            flash("Invalid OTP")
+            flash("Invalid OTP", "error")
 
-    return render_template("user/OTP.html", user=user, form=form, expired=expired)
+    return render_template("user/OTP.html", user=user, form=form, expired=expired, token=resetToken)
 
 # FLASK LOGIN
 @user_blueprint.route('/logout')
@@ -310,10 +321,19 @@ def reset(token):
         # If password has 0 errors and meets complexity requirement, password hashed and stored in database
         if check == []:
             pw_hash = hashlib.sha512(form.password.data.encode()).hexdigest()
-            c.execute("UPDATE users SET password=? WHERE username=?", (pw_hash, username))
-            conn.commit()
-            conn.close()
-            flash("Your password has been changed!", "success")
+            c.execute("SELECT * FROM users WHERE username=?", (username,))
+            user = c.fetchone()
+            if user[6] == pw_hash:
+                return "Old password match"
+                # flash("Cannot reuse old password! Please try again", "password")
+            else:
+                expiry = str(date.today() + timedelta(days=180))
+                c.execute("UPDATE users SET oldPassword=? WHERE username=?", (user[3], username))
+                c.execute("UPDATE users SET password=? WHERE username=?", (pw_hash, username))
+                c.execute("UPDATE users SET passwordExpiry=? WHERE username=?", (expiry, username))
+                conn.commit()
+                conn.close()
+                return redirect(url_for('user.signin'))
 
         else:
             # Goes through check list to check which policy does password fail

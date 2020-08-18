@@ -175,7 +175,7 @@ def signInOTP(token):
                 s = Serializer('secret_key', 300)
                 # Store username in token for authentication
                 resetToken = s.dumps(user[1]).decode('UTF-8')
-                # return redirect(url_for("user.reset", token=resetToken))
+                user = None
                 flash("Your password has expired!", "reset")
             else:
                 userObj = User(user[0], user[1], user[2], user[3], user[4])
@@ -324,8 +324,8 @@ def reset(token):
             c.execute("SELECT * FROM users WHERE username=?", (username,))
             user = c.fetchone()
             if user[6] == pw_hash:
-                return "Old password match"
-                # flash("Cannot reuse old password! Please try again", "password")
+                user = None
+                flash("Cannot reuse old password! Please try again", "error")
             else:
                 expiry = str(date.today() + timedelta(days=180))
                 c.execute("UPDATE users SET oldPassword=? WHERE username=?", (user[3], username))
@@ -333,7 +333,8 @@ def reset(token):
                 c.execute("UPDATE users SET passwordExpiry=? WHERE username=?", (expiry, username))
                 conn.commit()
                 conn.close()
-                return redirect(url_for('user.signin'))
+                user = None
+                flash("Your password has been changed!", "success")
 
         else:
             # Goes through check list to check which policy does password fail

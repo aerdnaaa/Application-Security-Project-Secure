@@ -36,7 +36,7 @@
     {% if expired == False %}
     <h2 id="formHeader" class="animated bounceIn">Enter OTP</h2>
     <div class="row justify-content-center">
-        <div class="col-6" id="formContent">
+        <div class="col-7" id="formContent">
             {% with messages = get_flashed_messages(category_filter=["reset"]) %}
             {% if messages %}
                 {% for message in messages %}

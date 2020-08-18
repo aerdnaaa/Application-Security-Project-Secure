@@ -269,7 +269,7 @@ c = conn.cursor()
 
 
 # setting admin status
-# c.execute("update users set admin ='y' where username='DomAdmin2'")
+# c.execute("update users set admin ='y' where username='DomAdmin3'")
 # conn.commit()
 # conn.close()
 # print('table updated')
@@ -288,11 +288,11 @@ c = conn.cursor()
 # conn.close()
 # print('users table created')
 
-c.execute(" SELECT * FROM users WHERE username='keith' ")
-print(c.fetchone())
-c.execute(" UPDATE users SET passwordExpiry = '2019-02-14' ")
-conn.commit()
-conn.close()
+# c.execute(" SELECT * FROM users WHERE username='keith' ")
+# print(c.fetchone())
+# c.execute(" UPDATE users SET passwordExpiry = '2019-02-14' ")
+# conn.commit()
+# conn.close()
 
 
 

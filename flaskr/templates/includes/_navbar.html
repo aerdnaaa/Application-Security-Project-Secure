@@ -29,14 +29,8 @@
         
         <li class="nav-item dropdown">
           <a class="nav-link" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="fa fa-search" aria-hidden="true"></i>
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <form class="form-inline my-2 my-lg-0 search-form" autocomplete="off">
-            
-              <input class="form-control mr-sm-2 search-input" id="query-input" type="text" name="query" placeholder="Search" aria-label="Search">
-              <button class="btn btn-success my-2 my-sm-0 search-button" type="submit" role="button">Search</button>
-            </form>
           </div>
         </li>
 
@@ -74,11 +68,6 @@ if (document.readyState == 'loading') {
 	document.addEventListener('DOMContentLoaded', ready)
 } else {
 	ready()
-}
-          function ready() {
-	var query = new URL(window.location).searchParams.get('query')
-	document.getElementById('query-input').value = query
-	document.getElementById('query-output').innerText = query
 }
 
 

@@ -2,7 +2,6 @@ from wtforms import Form, StringField, TextAreaField, IntegerField, FileField, R
 from wtforms.fields.html5 import EmailField, DateField
 import datetime
 from flask_wtf import RecaptchaField
-from flask_wtf.csrf import CSRFProtect
 
 class Register(Form):
     username = StringField("Username", [validators.InputRequired(), validators.Length(min=1, max=150)])

@@ -44,4 +44,3 @@ class Reviews(Form):
     reviews = StringField("Reviews", [validators.InputRequired()])
 
 
-

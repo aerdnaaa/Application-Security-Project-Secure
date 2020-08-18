@@ -4,7 +4,6 @@ import os
 import sqlite3
 import math
 import random
-
 import pyffx
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, abort
 # FLASK LOGIN
@@ -68,7 +67,8 @@ def register():
             if check == []:
                 pw_hash = hashlib.sha512(register.password.data.encode()).hexdigest()
                 unique_user_id = generate_user_id()
-                expiryDate = str(date.today() + timedelta(days=180))
+                # Set password expiry to 60 days from today
+                expiryDate = str(date.today() + timedelta(days=60))
                 c.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?, ?)",
                           (unique_user_id, register.username.data, register.email.data, pw_hash, 'n', expiryDate, pw_hash))
                 conn.commit()
@@ -122,10 +122,9 @@ def signin():
                 for i in range(8):
                     otp += digits[math.floor(random.random() * 10)]
 
-                s = Serializer('secret_key', 120)
+                s = Serializer('3d6f45a5fc12445dbac2f59c3b6c7cb1', 120)
                 # Store username and OTP in token for authentication
                 token = s.dumps([user[1], otp]).decode('UTF-8')
-                print(token)
                 # Send Email to user
                 mail.send_message(
                     'Indirect Home Gym Sign In',
@@ -152,8 +151,9 @@ def signInOTP(token):
     except:
         user = None
 
-    s = Serializer('secret_key', 120)
+    s = Serializer('3d6f45a5fc12445dbac2f59c3b6c7cb1', 120)
     try:
+        # Check if token is valid
         token = s.loads(token)
         username = token[0]
         otp = token[1]
@@ -170,16 +170,16 @@ def signInOTP(token):
             c.execute("SELECT * FROM users WHERE username=?", (username,))
             user = c.fetchone()
             today = str(date.today())
+            # Check if password has expired
             if datetime.strptime(today, "%Y-%m-%d").date() >= datetime.strptime(user[5], "%Y-%m-%d").date():
-                print("Token expired")
                 # Generate Token
-                s = Serializer('secret_key', 300)
+                s = Serializer('3d6f45a5fc12445dbac2f59c3b6c7cb1', 300)
                 # Store username in token for authentication
                 resetToken = s.dumps(user[1]).decode('UTF-8')
-                # return redirect(url_for("user.reset", token=resetToken))
-                flash("Your password has expired!", "reset")
                 user = None
+                flash("Your password has expired!", "reset")
             else:
+                # Sign in user
                 userObj = User(user[0], user[1], user[2], user[3], user[4])
                 if userObj.get_admin() == 'y':
                     login_user(userObj)
@@ -263,12 +263,11 @@ def forget():
     if request.method == "POST" and form.validate():
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
         c = conn.cursor()
-        # c.execute("SELECT username, email FROM users WHERE email=?", (form.email.data,))
         c.execute("SELECT username, email FROM users WHERE username=?", (form.username.data,))
         userInfo = c.fetchone()
         if userInfo is not None:
             # Generate Token
-            s = Serializer('secret_key', 300)
+            s = Serializer('3d6f45a5fc12445dbac2f59c3b6c7cb1', 300)
 
             # Store username in token for authentication
             token = s.dumps(userInfo[0]).decode('UTF-8')
@@ -298,7 +297,7 @@ def reset(token):
         user = None
 
     # Check if token is valid
-    s = Serializer('secret_key', 300)
+    s = Serializer('3d6f45a5fc12445dbac2f59c3b6c7cb1', 300)
     try:
         username = s.loads(token)
         expired = False
@@ -327,16 +326,18 @@ def reset(token):
             c.execute("SELECT * FROM users WHERE username=?", (username,))
             user = c.fetchone()
             if user[6] == pw_hash:
-                return "Old password match"
-                # flash("Cannot reuse old password! Please try again", "password")
+                user = None
+                flash("Cannot reuse old password! Please try again", "error")
             else:
-                expiry = str(date.today() + timedelta(days=180))
+                # Change password every 60 days
+                expiry = str(date.today() + timedelta(days=60))
                 c.execute("UPDATE users SET oldPassword=? WHERE username=?", (user[3], username))
                 c.execute("UPDATE users SET password=? WHERE username=?", (pw_hash, username))
                 c.execute("UPDATE users SET passwordExpiry=? WHERE username=?", (expiry, username))
                 conn.commit()
                 conn.close()
-                return redirect(url_for('user.signin'))
+                user = None
+                flash("Your password has been changed!", "success")
 
         else:
             # Goes through check list to check which policy does password fail

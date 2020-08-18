@@ -122,7 +122,7 @@ def signin():
                 for i in range(8) :
                     OTP += digits[math.floor(random.random() * 10)]
 
-                s = Serializer('secret_key', 120)
+                s = Serializer('3d6f45a5fc12445dbac2f59c3b6c7cb1', 120)
                 # Store username and OTP in token for authentication
                 token = s.dumps([user[1], OTP]).decode('UTF-8')
                 # Send Email to user
@@ -151,7 +151,7 @@ def signInOTP(token):
     except:
         user = None
 
-    s = Serializer('secret_key', 120)
+    s = Serializer('3d6f45a5fc12445dbac2f59c3b6c7cb1', 120)
     try:
         # Check if token is valid
         token = s.loads(token)
@@ -173,7 +173,7 @@ def signInOTP(token):
             # Check if password has expired
             if datetime.strptime(today, "%Y-%m-%d").date() >= datetime.strptime(user[5], "%Y-%m-%d").date():
                 # Generate Token
-                s = Serializer('secret_key', 300)
+                s = Serializer('3d6f45a5fc12445dbac2f59c3b6c7cb1', 300)
                 # Store username in token for authentication
                 resetToken = s.dumps(user[1]).decode('UTF-8')
                 user = None
@@ -266,7 +266,7 @@ def forget():
         userInfo = c.fetchone()
         if userInfo is not None:
             # Generate Token
-            s = Serializer('secret_key', 300)
+            s = Serializer('3d6f45a5fc12445dbac2f59c3b6c7cb1', 300)
 
             # Store username in token for authentication
             token = s.dumps(userInfo[0]).decode('UTF-8')
@@ -296,7 +296,7 @@ def reset(token):
         user = None
 
     # Check if token is valid
-    s = Serializer('secret_key', 300)
+    s = Serializer('3d6f45a5fc12445dbac2f59c3b6c7cb1', 300)
     try:
         username = s.loads(token)
         expired = False

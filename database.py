@@ -288,7 +288,7 @@ c = conn.cursor()
 # conn.close()
 # print('users table created')
 
-# c.execute(" SELECT * FROM users WHERE username='keith' ")
+# c.execute(" SELECT * FROM users WHERE username='keith123' ")
 # print(c.fetchone())
 # c.execute(" UPDATE users SET passwordExpiry = '2019-02-14' ")
 # conn.commit()

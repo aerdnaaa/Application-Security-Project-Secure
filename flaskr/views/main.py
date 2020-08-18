@@ -68,7 +68,7 @@ def reviews(productid):
     reviewsform = Reviews(request.form)
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()
-    c.execute("SELECT rowid,* FROM products WHERE rowid=?",(productid,))
+    c.execute("SELECT * FROM products WHERE product_id=?",(productid,))
     product = c.fetchone()
 
     c.execute("SELECT * FROM reviews")

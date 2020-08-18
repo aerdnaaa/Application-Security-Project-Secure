@@ -269,7 +269,7 @@ c = conn.cursor()
 
 
 # setting admin status
-# c.execute("update users set admin ='y' where username='DomAdmin'")
+# c.execute("update users set admin ='y' where username='DomAdmin2'")
 # conn.commit()
 # conn.close()
 # print('table updated')

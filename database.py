@@ -273,3 +273,26 @@ c = conn.cursor()
 # conn.commit()
 # conn.close()
 # print('table updated')
+
+# c.execute("DROP TABLE users")
+# c.execute("""CREATE TABLE IF NOT EXISTS users (
+#     user_id integer primary key,
+#     username text,
+#     email text,
+#     password text,
+#     admin text,
+#     passwordExpiry text,
+#     oldPassword text
+#     )""")
+# conn.commit()
+# conn.close()
+# print('users table created')
+
+c.execute(" SELECT * FROM users WHERE username='keith' ")
+print(c.fetchone())
+c.execute(" UPDATE users SET passwordExpiry = '2019-02-14' ")
+conn.commit()
+conn.close()
+
+
+

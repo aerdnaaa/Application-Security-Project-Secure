@@ -37,7 +37,22 @@
     <h2 id="formHeader" class="animated bounceIn">Enter OTP</h2>
     <div class="row justify-content-center">
         <div class="col-6" id="formContent">
-            {% with messages = get_flashed_messages() %}
+            {% with messages = get_flashed_messages(category_filter=["reset"]) %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span>
+                        {{message}} <a href="/Reset_Password/{{token}}" style="text-decoration: none;">Click here</a> to reset password
+                    </span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+            {% with messages = get_flashed_messages(category_filter=["error"]) %}
                 {% if messages %}
                     {% for message in messages %}
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -49,6 +64,7 @@
                     {% endfor %}
                 {% endif %}
             {% endwith %}
+
             <form method="POST" action="">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="form-group">

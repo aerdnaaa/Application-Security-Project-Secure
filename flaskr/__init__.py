@@ -78,7 +78,7 @@ def sentry_issues():
 def load_user(user_id):
     conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
     c = conn.cursor()
-    c.execute("SELECT * FROM users WHERE user_id={} ".format(user_id))
+    c.execute("SELECT * FROM users WHERE user_id=? ", (user_id,))
     conn.commit()
     user = c.fetchone()
     conn.close()

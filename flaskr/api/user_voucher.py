@@ -63,7 +63,7 @@ class UserVoucher(Resource):
             # Validate if voucher code is in database
             while True:
                 voucher_code = get_random_alphanumeric_string(8)
-                c.execute(f"SELECT * FROM vouchers WHERE code='{voucher_code}'")
+                c.execute("SELECT * FROM vouchers WHERE code=?", (voucher_code,))
                 if not c.fetchone():
                     break
             voucher_image = ""

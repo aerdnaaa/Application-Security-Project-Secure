@@ -1,17 +1,18 @@
+import logging
+import os
+import sqlite3
+import sentry_sdk
+
 from flask import Flask
 from flask_cors import CORS
-from flask_mail import Mail
-import os, sqlite3
-import logging
-import sentry_sdk
-from flask_restful import Api
 from flask_login import LoginManager
+from flask_mail import Mail
+from flask_restful import Api
+from flask_wtf.csrf import CSRFProtect
 from flaskr.models.User import User
-from flask_wtf.csrf import CSRFProtect,CSRFError
-
+from sentry_sdk.integrations.flask import FlaskIntegration
 # sentry sdk for logging
 from sentry_sdk.integrations.logging import LoggingIntegration
-from sentry_sdk.integrations.flask import FlaskIntegration
 
 # All of this is already happening by default!
 sentry_logging = LoggingIntegration(
@@ -22,6 +23,7 @@ sentry_sdk.init(
     dsn="https://6adb767a90f14dee90f656e1e355f0b1@o412137.ingest.sentry.io/5288433",
     integrations=[FlaskIntegration()]
 )
+
 
 app = Flask(__name__)
 api_app = Api(app)
@@ -35,6 +37,7 @@ app.config.update(
     MAIL_PASSWORD='ionevvqefbbwmcip'
 )
 mail = Mail(app)
+
 
 login_manager = LoginManager(app)
 app.config.from_object('config')

@@ -18,7 +18,7 @@ class Products(Resource):
         product_list = []
         conn = sqlite3.connect(os.path.join(file_directory, "storage.db"))
         c = conn.cursor()
-        c.execute(f"SELECT * FROM products ")
+        c.execute("SELECT * FROM products ")
         products = c.fetchall()
         if admin == 'y':
             for product in products:

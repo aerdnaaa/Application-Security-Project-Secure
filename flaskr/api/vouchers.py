@@ -22,6 +22,8 @@ class Vouchers(Resource):
         if is_admin == 'y':
             vouchers = [dict(row) for row in c.fetchall()]
         else:
+            c.execute("SELECT amount, code, description, image_path, title, status FROM vouchers where user_id=0")
+            conn.commit()
             vouchers = []
             for row in c.fetchall():
                 if row[5] == "active":
